@@ -1,6 +1,6 @@
 const express = require('express');
 const ctrl = require('../../controllers/auth');
 
-const router = express.Router();
+const routers = express.Router();
 
-module.exports = router;
+module.exports = routers;
