@@ -1,11 +1,11 @@
 const express = require('express')
 const cors = require('cors')
-require('dotenv').config()
 
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
+const { dbRouter } = require("./db");
 const authRouter = require('./routes/api/auth')
 
 const app = express()
@@ -24,6 +24,7 @@ app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.text({ type: 'text/plain' }));
 
+app.use(dbRouter);
 app.use('/api/auth', authRouter)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
