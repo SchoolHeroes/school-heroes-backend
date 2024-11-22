@@ -1,7 +1,6 @@
-const validateLoginData = ({ email, phone, password, googleToken, appleToken, res }) => {
+const validateLoginData = ({ email, password, googleToken, appleToken, res }) => {
     const loginMethods = {
         "Email and Password": ctrl.loginWithEmailAndPassword,
-        "Phone and Password": ctrl.loginWithPhoneAndPassword,
         "Google Login": ctrl.loginWithGoogle,
         "Apple Login": ctrl.loginWithApple,
     };
@@ -19,14 +18,6 @@ const validateLoginData = ({ email, phone, password, googleToken, appleToken, re
 const loginWithEmailAndPassword = ({ email, password }) => {
     if (email && password) {
         // Логіка авторизації емейлу і пароля
-    } else {
-        return
-    }
-}
-
-const loginWithPhoneAndPassword = ({ phone, password }) => {
-    if (phone && password) {
-        // Логіка авторизації телефона і пароля
     } else {
         return
     }
@@ -51,7 +42,6 @@ const loginWithApple = ({ appleToken }) => {
 module.exports = {
     validateLoginData,
     loginWithEmailAndPassword,
-    loginWithPhoneAndPassword,
     loginWithGoogle,
     loginWithApple,
 };
