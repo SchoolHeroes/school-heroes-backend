@@ -28,10 +28,10 @@ git clone https://github.com/SchoolHeroes/school-heroes-backend
 ### Як запустити локально
 1. Клонуйте репозиторій на свій локальний комп’ютер. Використовуйте git clone, щоб зробити це у терміналі:
 
-```баш
+```bash
 git clone https://github.com/SchoolHeroes/school-heroes-backend
 ```
-2. Перемістіться в папку school-heroes-backend 
+2. Перейдіть в папку school-heroes-backend 
 3. Створіть файл .env у кореневій папці проекту та заповніть його прикладом із .env.example
 
 ### Посилання
