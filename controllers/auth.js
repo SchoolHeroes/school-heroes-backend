@@ -1,23 +1,7 @@
-const validateLoginData = ({ email, password, googleToken, appleToken, res }) => {
-    const loginMethods = {
-        "Email and Password": ctrl.loginWithEmailAndPassword,
-        "Google Login": ctrl.loginWithGoogle,
-        "Apple Login": ctrl.loginWithApple,
-    };
-
-    for (const controller of Object.entries(loginMethods)) {
-        const result = controller({ email, phone, password, googleToken, appleToken });
-        if (result) {
-            res.status(200).json("Success login");
-            return
-        }
-    }
-    res.status(400).json({ message: "Invalid login credentials" });
-};
-
 const loginWithEmailAndPassword = ({ email, password }) => {
     if (email && password) {
         // Логіка авторизації емейлу і пароля
+        return { success: true };
     } else {
         return
     }
@@ -26,6 +10,7 @@ const loginWithEmailAndPassword = ({ email, password }) => {
 const loginWithGoogle = ({ googleToken }) => {
     if (googleToken) {
         // Логіка авторизації з гугл акаунта
+        return { success: true };
     } else {
         return
     }
@@ -34,13 +19,13 @@ const loginWithGoogle = ({ googleToken }) => {
 const loginWithApple = ({ appleToken }) => {
     if (appleToken) {
         // Логіка авторизації з епл акаунта
+        return { success: true };
     } else {
         return
     }
 }
 
 module.exports = {
-    validateLoginData,
     loginWithEmailAndPassword,
     loginWithGoogle,
     loginWithApple,

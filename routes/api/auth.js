@@ -1,8 +1,8 @@
 const express = require('express');
-const ctrl = require('../../controllers/auth');
+const validateLoginDataMiddleware = require('../../middlewares/validateData')
 
 const router = express.Router();
 
-router.post('/login', (req, res) => ctrl.validateLoginData({ ...req.body, res }));
+router.post('/login', validateLoginDataMiddleware, (req, res) => res.status(200).json({ message: "Login successful" }));
 
 module.exports = router;
