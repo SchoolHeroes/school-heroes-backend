@@ -31,7 +31,7 @@ git clone https://github.com/SchoolHeroes/school-heroes-backend
 ```баш
 git clone https://github.com/SchoolHeroes/school-heroes-backend
 ```
-2. Перемістіться в папку school-heroes-backend 
+2. Перейдіть у папку school-heroes-backend 
 3. Створіть файл .env у кореневій папці проекту та заповніть його прикладом із .env.example
 
 ### Посилання
