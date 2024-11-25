@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// npx prisma migrate dev --name add-auth-method-enum
+// npx prisma generate
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AuthMethod {
+  email
+  google
+  apple
+}
+
+enum UserRole {
+  child
+  speaker
+}
+
+model User {
+  id        Int      @id @default(autoincrement()) 
+  method    AuthMethod
+  email     String?   @unique
+  password  String?
+  google_id String?   @unique
+  apple_id  String?   @unique 
+  role      UserRole                     
+  name      String
+  phone     String
+  country   String
+  city      String
+  birthday  DateTime?
+  activity  String?
+  company   String?
+  address   String?
+  telegram  String?
+  facebook  String?
+  instagram String?
+  youtube   String?
+  educational_institution  String?
+  passions  String?
+  points    Int?
+  verify_email  Boolean @default(false)
+  createdAt DateTime @default(now())              
+}
