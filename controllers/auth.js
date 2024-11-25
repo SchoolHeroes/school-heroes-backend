@@ -1,56 +1,64 @@
-const { OAuth2Client } = require("google-auth-library");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs/promises');
-const {nanoid} = require('nanoid');
-const { httpError, ctrlWrapper, sendEmail } = require('../helpers');
-const verifyAppleToken = require('../helpers/verifyAppleToken');
+const { nanoid } = require('nanoid');
+const { PrismaClient } = require('@prisma/client');
+const { httpError, ctrlWrapper, sendEmail, getGoogleId, getAppleId } = require('../helpers');
 require('dotenv').config();
+
+const prisma = new PrismaClient();
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET_KEY, { expiresIn: "24h" });
 };
 
 const register = async (req, res) => {
-    const { method, email, password, token, name, role, phone, country, city, birthday, activity, passions, address } =
-      req.body;
-
-    let user;
+  const { method, email, password, token, role, name, phone, country, city, birthday, activity } = req.body;
+  const data = Object.fromEntries(
+    Object.entries({ method, email, role, name, phone, country, city, birthday, activity })
+      .filter(([key, value]) => value !== undefined)
+  );
 
     if (method === "email") {      
-        // Перевірка користувача за email
-        
-        const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
 
-         // Створення нового користувача
+      if (user) {
+        throw httpError(409, "Email already in use");
+      }     
+      const hashedPassword = await bcrypt.hash(password, 10);
+      data.password = hashedPassword;
     }
 
     if (method === "google") {
-      const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+      const googleId = getGoogleId(token);
 
-      const ticket = await googleClient.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
+      const user = await prisma.user.findUnique({
+        where: { google_id: googleId },
       });
 
-      const payload = ticket.getPayload();
-      const { email: googleEmail } = payload;
-
-      // Перевірка користувача за email та створення нового користувача
+      if (user) {
+        throw httpError(409, "A user with this Google ID is already registered");
+      }     
+      data.google_id = googleId;
     }
 
     if (method === "apple") {
-      const isValid = verifyAppleToken(token); 
-      
-        if (!isValid) {
-            throw httpError(401, "Invalid Apple token");
-        }
+      const appleId = getAppleId(token);
 
-      // Перевірка користувача за email та створення нового користувача
+      const user = await prisma.user.findUnique({
+        where: { apple_id: appleId },
+      });
+
+      if (user) {
+        throw httpError(409, "A user with this Apple ID is already registered");
+      }     
+      data.apple_id = appleId;
     }
 
-    // Збереження користувача
+    const newUser = await prisma.user.create({data});
 
     const verificationToken = nanoid();
     const verifyEmail = {
@@ -65,9 +73,9 @@ const register = async (req, res) => {
 
     await sendEmail(verifyEmail);
 
-    const jwtToken = generateToken(user._id);
+    const jwtToken = generateToken(newUser.id);
 
-    res.status(201).json({ token: jwtToken, user });
+    res.status(201).json({ token: jwtToken, newUser });
 };
 
 const login = async (req, res) => {

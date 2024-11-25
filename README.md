@@ -12,7 +12,7 @@ This is a github repository of SH App, backend part
 ```bash
 git clone https://github.com/SchoolHeroes/school-heroes-backend
 ```
-2. Move to folder school-heroes-backend 
+2. Go to folder school-heroes-backend 
 3. Create file .env in root folder app and fill it with example from .env.example
 
 ### Links

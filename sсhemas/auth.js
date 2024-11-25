@@ -5,19 +5,17 @@ const {
     phoneRegexp,
     passwordRegex,
     locationRegexp,
-} = require("../utils");
+} = require("../utils/regexp");
 
 const registerSchema = Joi.object({
   method: Joi.string().valid("email", "google", "apple").required(),
   
-  // Поля для всіх методів
   name: Joi.string().min(2).max(30).required(),
   role: Joi.string().valid("child", "speaker").required(),
   phone: Joi.string().pattern(phoneRegexp).required(),
   country: Joi.string().pattern(locationRegexp).required(),
   city: Joi.string().pattern(locationRegexp).required(),
 
-  // Поля для методу email
   email: Joi.when('method', {
     is: 'email',
     then: Joi.string().pattern(emailRegexp).required(),
@@ -29,14 +27,12 @@ const registerSchema = Joi.object({
     otherwise: Joi.string().optional(),
   }),
 
-  // Поля для методів Google/Apple
   token: Joi.when('method', {
     is: Joi.valid("google", "apple"),
     then: Joi.string().required(),
     otherwise: Joi.string().optional(),
   }),
 
-  // Поля, залежні від role
   birthday: Joi.string().pattern(dateRegexp).when('role', {
     is: 'child',
     then: Joi.required(),
@@ -47,10 +43,6 @@ const registerSchema = Joi.object({
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
-
-  // Необов'язкові поля
-  passions: Joi.string().default(''),
-  address: Joi.string().default(''),
 });
 
 const loginSchema = Joi.object({
@@ -75,6 +67,11 @@ const loginSchema = Joi.object({
 const emailSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required(),
 });
+
+// const updateUserSchema = Joi.object({
+//   passions: Joi.string().default(''),
+//   address: Joi.string().default(''),
+// });
 
 module.exports = {
     registerSchema,
