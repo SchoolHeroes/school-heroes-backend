@@ -4,7 +4,7 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-// npx prisma migrate dev --name add-auth-method-enum
+// npx prisma migrate dev --name add-avatar
 // npx prisma generate
 
 generator client {
@@ -39,6 +39,7 @@ model User {
   phone     String
   country   String
   city      String
+  avatar    String
   birthday  DateTime?
   activity  String?
   company   String?
@@ -50,6 +51,5 @@ model User {
   educational_institution  String?
   passions  String?
   points    Int?
-  verify_email  Boolean @default(false)
   createdAt DateTime @default(now())              
 }

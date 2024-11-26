@@ -1,12 +1,18 @@
 const express = require('express');
 const ctrl = require('../../controllers/auth');
-const { registerSchema, loginSchema } = require("../../sсhemas/auth");
-const { validateBody } = require("../../middlewares");
+const { registerSchema, emailAuthSchema, tokenAuthSchema } = require("../../sсhemas/auth");
+const { validateBody, upload, checkFileSize } = require("../../middlewares");
 
 const router = express.Router();
 
-router.post("/register", validateBody(registerSchema), ctrl.register);
+router.post("/register", upload.single("file"), checkFileSize, validateBody(registerSchema), ctrl.register);
 
-router.post("/login", validateBody(loginSchema), ctrl.login);
+// router.post("/register", validateBody(registerSchema), ctrl.register);
+
+router.post("/login", validateBody(emailAuthSchema), ctrl.emailAuth);
+
+router.post("/google", validateBody(tokenAuthSchema), ctrl.googleAuth);
+
+router.post("/apple", validateBody(tokenAuthSchema), ctrl.appleAuth);
 
 module.exports = router;

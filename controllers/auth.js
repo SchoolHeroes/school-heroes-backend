@@ -5,6 +5,7 @@ const fs = require('fs/promises');
 const { nanoid } = require('nanoid');
 const { PrismaClient } = require('@prisma/client');
 const { httpError, ctrlWrapper, sendEmail, getGoogleId, getAppleId } = require('../helpers');
+const { uploadFileToCloudinary, deleteFileFromCloudinary } = require("../helpers/cloudinary");
 require('dotenv').config();
 
 const prisma = new PrismaClient();
@@ -14,75 +15,94 @@ const generateToken = (userId) => {
 };
 
 const register = async (req, res) => {
-  const { method, email, password, token, role, name, phone, country, city, birthday, activity } = req.body;
-  const data = Object.fromEntries(
-    Object.entries({ method, email, role, name, phone, country, city, birthday, activity })
-      .filter(([key, value]) => value !== undefined)
-  );
+  const { file } = req;
+  const data = req.body;
+  
+  const { method, email, password } = data;
 
-    if (method === "email") {      
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
+  if (method === 'email') {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
-      if (user) {
-        throw httpError(409, "Email already in use");
-      }     
-      const hashedPassword = await bcrypt.hash(password, 10);
-      data.password = hashedPassword;
-    }
+    if (user) {
+      throw httpError(409, "Email already in use");
+    }     
+    const hashedPassword = await bcrypt.hash(password, 10);
+    data.password = hashedPassword;
+  }
 
-    if (method === "google") {
-      const googleId = getGoogleId(token);
+  const downloadedFile = await uploadFileToCloudinary(file);
 
-      const user = await prisma.user.findUnique({
-        where: { google_id: googleId },
-      });
+  const fileURL = downloadedFile.secure_url;
+  data.avatar = fileURL;
+  
+  const newUser = await prisma.user.create({data});
 
-      if (user) {
-        throw httpError(409, "A user with this Google ID is already registered");
-      }     
-      data.google_id = googleId;
-    }
+  const jwtToken = generateToken(newUser.id);
 
-    if (method === "apple") {
-      const appleId = getAppleId(token);
-
-      const user = await prisma.user.findUnique({
-        where: { apple_id: appleId },
-      });
-
-      if (user) {
-        throw httpError(409, "A user with this Apple ID is already registered");
-      }     
-      data.apple_id = appleId;
-    }
-
-    const newUser = await prisma.user.create({data});
-
-    const verificationToken = nanoid();
-    const verifyEmail = {
-        to: [{email}],
-        subject: "Підтвердження адреси електронної пошти у додатку «Школа Героїв»",
-        html: `
-            <p>
-                <a target="_blank" href="${process.env.BASE_SERVER_URL}/api/auth/verify/${verificationToken}">Натисніть тут</a> для підтвердження адреси вашої електронної пошти
-            </p>
-            `
-    };
-
-    await sendEmail(verifyEmail);
-
-    const jwtToken = generateToken(newUser.id);
-
-    res.status(201).json({ token: jwtToken, newUser });
+  res.status(201).json({ token: jwtToken, newUser });
 };
 
-const login = async (req, res) => {
+const emailAuth = async (req, res) => {
+  const { email, password } = req.body;
+  
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
 
+    if (!user) {
+      throw httpError(401, "Invalid Email");
+    }
+    
+    const passwordCompare = await bcrypt.compare(password, user.password);
+    
+    if (!passwordCompare) {
+      throw httpError(401, 'Invalid password');
+    }
+
+  const jwtToken = generateToken(user.id);
+
+  res.status(200).json({ token: jwtToken, user });
+};
+
+const googleAuth = async (req, res) => {
+  const { token } = req.body;
+  const googleId = getGoogleId(token);
+
+  const user = await prisma.user.findUnique({
+    where: { google_id: googleId },
+  });
+
+    if (!user) {
+      return res.status(200).json({ message: "Additional info required", googleId });
+    }
+  
+  const jwtToken = generateToken(user.id);
+
+  res.status(200).json({ token: jwtToken, user });
+};
+
+const appleAuth = async (req, res) => {
+  const { token } = req.body;
+  const appleId = getAppleId(token);
+
+  const user = await prisma.user.findUnique({
+    where: { apple_id: appleId },
+  });
+
+    if (!user) {
+      return res.status(200).json({ message: "Additional info required", appleId });
+    }
+  
+  const jwtToken = generateToken(user.id);
+
+  res.status(200).json({ token: jwtToken, user });
 };
 
 module.exports = {
-    register: ctrlWrapper(register),
-    login: ctrlWrapper(login),
+  register: ctrlWrapper(register),
+  emailAuth: ctrlWrapper(emailAuth),
+  googleAuth: ctrlWrapper(googleAuth),
+  appleAuth: ctrlWrapper(appleAuth),
 }

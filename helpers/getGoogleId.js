@@ -15,7 +15,6 @@ const getGoogleId = async (token) => {
 
     const payload = ticket.getPayload();
     const googleId = payload.sub;
-    //   const googleEmail = payload.email;
 
     return googleId;
 };

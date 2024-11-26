@@ -27,8 +27,14 @@ const registerSchema = Joi.object({
     otherwise: Joi.string().optional(),
   }),
 
-  token: Joi.when('method', {
-    is: Joi.valid("google", "apple"),
+  googleId: Joi.when('method', {
+    is: "google",
+    then: Joi.string().required(),
+    otherwise: Joi.string().optional(),
+  }),
+
+  appleId: Joi.when('method', {
+    is: "apple",
     then: Joi.string().required(),
     otherwise: Joi.string().optional(),
   }),
@@ -45,27 +51,13 @@ const registerSchema = Joi.object({
   }),
 });
 
-const loginSchema = Joi.object({
-  method: Joi.string().valid("email", "google", "apple").required(),
-  email: Joi.when('method', {
-    is: 'email',
-    then: Joi.string().pattern(emailRegexp).required(),
-    otherwise: Joi.string().optional(),
-  }),
-  password: Joi.when('method', {
-    is: 'email',
-    then: Joi.string().min(8).max(24).required(),
-    otherwise: Joi.string().optional(),
-  }),
-  token: Joi.when('method', {
-    is: Joi.valid("google", "apple"),
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
+const emailAuthSchema = Joi.object({
+  password: Joi.string().min(8).max(24).required(),
+  email: Joi.string().pattern(emailRegexp).required(),
 });
 
-const emailSchema = Joi.object({
-  email: Joi.string().pattern(emailRegexp).required(),
+const tokenAuthSchema = Joi.object({
+  token: Joi.string().required(),
 });
 
 // const updateUserSchema = Joi.object({
@@ -75,6 +67,6 @@ const emailSchema = Joi.object({
 
 module.exports = {
     registerSchema,
-    loginSchema,
-    emailSchema,
+    emailAuthSchema,
+    tokenAuthSchema,
 };
