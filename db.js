@@ -2,7 +2,7 @@ require("dotenv").config();
 const { neon } = require("@neondatabase/serverless");
 const express = require("express");
 
-const sql = neon(process.env.DATABASE_URL);
+const sql = neon(process.env.DATABASE_URL_TEST);
 
 const dbRouter = express.Router();
 
