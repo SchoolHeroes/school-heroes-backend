@@ -14,9 +14,12 @@ const getGoogleId = async (token) => {
     }
 
     const payload = ticket.getPayload();
-    const googleId = payload.sub;
+    const data = {
+        googleId: payload.sub,
+    }
+    payload.email && (data.googleEmail = payload.email);
 
-    return googleId;
+    return data;
 };
 
 module.exports = getGoogleId;

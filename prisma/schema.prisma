@@ -13,7 +13,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_TEST")
 }
 
 enum AuthMethod {
@@ -51,5 +51,6 @@ model User {
   educational_institution  String?
   passions  String?
   points    Int?
-  createdAt DateTime @default(now())              
+  createdAt DateTime @default(now()) 
+  updatedAt DateTime   @updatedAt             
 }

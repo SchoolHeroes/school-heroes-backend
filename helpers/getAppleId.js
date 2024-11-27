@@ -12,9 +12,12 @@ const getAppleId = (token) => {
       throw httpError(401, "Error verifying Apple token");
     }
 
-    const appleId = payload.sub;
+    const data = {
+        appleId: payload.sub,
+    }
+    payload.email && (data.appleEmail = payload.email);
 
-    return appleId;
+    return data;
 };
 
 module.exports = getAppleId;

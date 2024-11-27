@@ -7,8 +7,6 @@ const router = express.Router();
 
 router.post("/register", upload.single("file"), checkFileSize, validateBody(registerSchema), ctrl.register);
 
-// router.post("/register", validateBody(registerSchema), ctrl.register);
-
 router.post("/login", validateBody(emailAuthSchema), ctrl.emailAuth);
 
 router.post("/google", validateBody(tokenAuthSchema), ctrl.googleAuth);

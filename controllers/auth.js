@@ -61,6 +61,13 @@ const emailAuth = async (req, res) => {
       throw httpError(401, 'Invalid password');
     }
 
+    if (user.method !== 'email') {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { method: 'email' },
+      });
+    }
+
   const jwtToken = generateToken(user.id);
 
   res.status(200).json({ token: jwtToken, user });
@@ -68,36 +75,76 @@ const emailAuth = async (req, res) => {
 
 const googleAuth = async (req, res) => {
   const { token } = req.body;
-  const googleId = getGoogleId(token);
+  const data = getGoogleId(token);
+  const { googleId, googleEmail } = data;
 
-  const user = await prisma.user.findUnique({
-    where: { google_id: googleId },
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { google_id: googleId },
+        { email: googleEmail },
+      ],
+    },
   });
 
     if (!user) {
-      return res.status(200).json({ message: "Additional info required", googleId });
+      return res.status(200).json({ message: "Additional information is required for registration.", data });
     }
   
-  const jwtToken = generateToken(user.id);
+  let updatedUser = user;
 
-  res.status(200).json({ token: jwtToken, user });
+    if (user.google_id === googleId && !user.email && googleEmail) {
+      updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: { email: googleEmail },
+      });
+    } else if (user.email === googleEmail && !user.google_id) {
+      updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: { google_id: googleId, method: 'google' },
+      });
+    } 
+  
+  const jwtToken = generateToken(updatedUser.id);
+
+  res.status(200).json({ token: jwtToken, user: updatedUser });
 };
 
 const appleAuth = async (req, res) => {
   const { token } = req.body;
-  const appleId = getAppleId(token);
+  const data = getAppleId(token);
+  const { appleId, appleEmail } = data;
 
-  const user = await prisma.user.findUnique({
-    where: { apple_id: appleId },
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { apple_id: appleId },
+        { email: appleEmail },
+      ],
+    },
   });
 
     if (!user) {
-      return res.status(200).json({ message: "Additional info required", appleId });
+      return res.status(200).json({ message: "Additional information is required for registration.", data });
     }
   
-  const jwtToken = generateToken(user.id);
+  let updatedUser = user;
 
-  res.status(200).json({ token: jwtToken, user });
+    if (user.apple_id === appleId && !user.email && appleEmail) {
+      updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: { email: appleEmail },
+      });
+    } else if (user.email === appleEmail && !user.apple_id) {
+      updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: { apple_id: appleId, method: 'apple' },
+      });
+    } 
+  
+  const jwtToken = generateToken(updatedUser.id);
+
+  res.status(200).json({ token: jwtToken, user: updatedUser });
 };
 
 module.exports = {
