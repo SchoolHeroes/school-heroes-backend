@@ -13,9 +13,9 @@ const getAppleId = (token) => {
     }
 
     const data = {
-        appleId: payload.sub,
+        apple_id: payload.sub,
     }
-    payload.email && (data.appleEmail = payload.email);
+    payload.email && (data.email = payload.email);
 
     return data;
 };

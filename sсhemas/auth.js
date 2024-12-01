@@ -24,19 +24,19 @@ const registerSchema = Joi.object({
   password: Joi.when('method', {
     is: 'email',
     then: Joi.string().min(8).max(24).pattern(passwordRegex).required(),
-    otherwise: Joi.string().optional(),
+    otherwise: Joi.forbidden(),
   }),
 
-  googleId: Joi.when('method', {
+  google_id: Joi.when('method', {
     is: "google",
     then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
+    otherwise: Joi.forbidden(),
   }),
 
-  appleId: Joi.when('method', {
+  apple_id: Joi.when('method', {
     is: "apple",
     then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
+    otherwise: Joi.forbidden(),
   }),
 
   birthday: Joi.string().pattern(dateRegexp).when('role', {

@@ -6,18 +6,25 @@ const { nanoid } = require('nanoid');
 const { PrismaClient } = require('@prisma/client');
 const { httpError, ctrlWrapper, sendEmail, getGoogleId, getAppleId } = require('../helpers');
 const { uploadFileToCloudinary, deleteFileFromCloudinary } = require("../helpers/cloudinary");
+const { log } = require('console');
 require('dotenv').config();
+
+const { JWT_SECRET_KEY, BASE_SERVER_URL } = process.env;
 
 const prisma = new PrismaClient();
 
 const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET_KEY, { expiresIn: "24h" });
+  return jwt.sign({ id: userId }, JWT_SECRET_KEY, { expiresIn: "24h" });
 };
 
 const register = async (req, res) => {
   const { file } = req;
   const data = req.body;
   
+  const downloadedFile = await uploadFileToCloudinary(file);
+  const fileURL = downloadedFile.secure_url;
+  data.avatar = fileURL;
+
   const { method, email, password } = data;
 
   if (method === 'email') {
@@ -25,17 +32,42 @@ const register = async (req, res) => {
       where: { email },
     });
 
-    if (user) {
+    if (user && user.verify_email) {
       throw httpError(409, "Email already in use");
-    }     
-    const hashedPassword = await bcrypt.hash(password, 10);
-    data.password = hashedPassword;
+    }
+
+    let verificationToken;
+
+    if (user && !user.verify_email) {
+      verificationToken = user.verification_token;
+    }
+    
+    if (!user) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      data.password = hashedPassword;
+
+      verificationToken = nanoid();
+      data.verification_token = verificationToken;
+
+      await prisma.user.create({data});
+    }
+
+    const verifyEmail = {
+        to: [{email}],
+        subject: "Підтвердження адреси електронної пошти у додатку «Школа Героїв»",
+        html: `
+            <p>
+                <a target="_blank" href="${BASE_SERVER_URL}/api/auth/verify/${verificationToken}">Натисніть тут</a> для підтвердження адреси вашої електронної пошти
+            </p>
+            `
+    };
+
+    await sendEmail(verifyEmail);
+
+    return res.status(200).json({
+        message: 'Verify email send success'
+    });
   }
-
-  const downloadedFile = await uploadFileToCloudinary(file);
-
-  const fileURL = downloadedFile.secure_url;
-  data.avatar = fileURL;
   
   const newUser = await prisma.user.create({data});
 
@@ -53,6 +85,10 @@ const emailAuth = async (req, res) => {
 
     if (!user) {
       throw httpError(401, "Invalid Email");
+    }
+  
+    if (!user.verify_email) {
+        throw httpError(401, "Email not verified");
     }
     
     const passwordCompare = await bcrypt.compare(password, user.password);
@@ -76,13 +112,13 @@ const emailAuth = async (req, res) => {
 const googleAuth = async (req, res) => {
   const { token } = req.body;
   const data = getGoogleId(token);
-  const { googleId, googleEmail } = data;
+  const { google_id, email } = data;
 
   const user = await prisma.user.findFirst({
     where: {
       OR: [
-        { google_id: googleId },
-        { email: googleEmail },
+        { google_id },
+        { email },
       ],
     },
   });
@@ -93,15 +129,15 @@ const googleAuth = async (req, res) => {
   
   let updatedUser = user;
 
-    if (user.google_id === googleId && !user.email && googleEmail) {
+    if (user.google_id === google_id && !user.email && email) {
       updatedUser = await prisma.user.update({
         where: { id: user.id },
-        data: { email: googleEmail },
+        data: { email },
       });
-    } else if (user.email === googleEmail && !user.google_id) {
+    } else if (user.email === email && !user.google_id) {
       updatedUser = await prisma.user.update({
         where: { id: user.id },
-        data: { google_id: googleId, method: 'google' },
+        data: { google_id, method: 'google' },
       });
     } 
   
@@ -113,13 +149,13 @@ const googleAuth = async (req, res) => {
 const appleAuth = async (req, res) => {
   const { token } = req.body;
   const data = getAppleId(token);
-  const { appleId, appleEmail } = data;
+  const { apple_id, email } = data;
 
   const user = await prisma.user.findFirst({
     where: {
       OR: [
-        { apple_id: appleId },
-        { email: appleEmail },
+        { apple_id },
+        { email },
       ],
     },
   });
@@ -130,15 +166,15 @@ const appleAuth = async (req, res) => {
   
   let updatedUser = user;
 
-    if (user.apple_id === appleId && !user.email && appleEmail) {
+    if (user.apple_id === apple_id && !user.email && email) {
       updatedUser = await prisma.user.update({
         where: { id: user.id },
-        data: { email: appleEmail },
+        data: { email },
       });
     } else if (user.email === appleEmail && !user.apple_id) {
       updatedUser = await prisma.user.update({
         where: { id: user.id },
-        data: { apple_id: appleId, method: 'apple' },
+        data: { apple_id, method: 'apple' },
       });
     } 
   
