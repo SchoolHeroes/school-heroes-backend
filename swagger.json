@@ -1,116 +1,274 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "version": "1.0.0",
-      "title": "Swagger doc",
-      "description": "Documentation for server requests and responses",
-      "license": {
-        "name": "MIT",
-        "url": "https://opensource.org/licenses/MIT"
-      }
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "School of Heroes app API",
+    "description": "Documentation for server requests and responses of the School of Heroes app",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "consumes": ["application/json", "multipart/form-data"],
+  "produces": ["application/json"],
+  "servers": [{ "url": "https://school-heroes-backend.onrender.com/api" }],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
     },
-    "consumes": ["application/json", "multipart/form-data"],
-    "produces": ["application/json", "multipart/form-data"],
-    "servers": [{ "url": "http://localhost:3000" }],
-    "tags": [
-      {
-        "name": "Auth",
-        "description": "Authorization endpoints"
-      },
-      {
-        "name": "Notices",
-        "description": "Notices endpoints"
-      },
-      {
-        "name": "Pets",
-        "description": "Pets endpoints"
-      },
-      {
-        "name": "User + Pets",
-        "description": "User + Pets endpoints"
-      }
-    ],
-    "paths": {
-      "/auth/register": {
-        "post": {
-          "tags": ["Auth"],
-          "summary": "User registration",
-          "parameters": [],
-          "security": [{ "Bearer": [] }],
-          "requestBody": {
-            "description": "Registration's object",
-            "required": true,
+    {
+      "name": "Events",
+      "description": "Events endpoints"
+    },
+    {
+      "name": "Offers",
+      "description": "Offers endpoints"
+    },
+    {
+      "name": "Donations",
+      "description": "Donations endpoints"
+    },
+    {
+      "name": "Organizers",
+      "description": "Organizers endpoints"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Create a new user",
+        "parameters": [],
+        "requestBody": {
+          "description": "Registration's object",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationRequest"
+                  "$ref": "#/components/schemas/RegistrationWithEmailResponse"
                 }
               }
             }
           },
-          "responses": {
-            "201": {
-              "description": "Successful operation",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/RegistrationResponse"
-                  }
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
                 }
               }
-            },
-            "400": {
-              "description": "Bad request (invalid request body)",
-              "content": {}
-            },
-            "409": {
-              "description": "Provided email already exists",
-              "content": {}
             }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "409": {
+            "description": "Email already in use",
+            "content": {}
           }
         }
       }
-    },
-    "components": {
-      "schemas": {
-        "RegistrationRequest": {
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegistrationRequest": {
+        "type": "object",
+        "oneOf": [
+          {"$ref": "#/components/schemas/RegisterWithEmail"},
+          {"$ref": "#/components/schemas/RegisterWithGoogle"},
+          {"$ref": "#/components/schemas/RegisterWithApple"}
+        ],
+        "RegisterWithEmail": {
           "type": "object",
-          "required": ["name", "email", "password"],
+          "required": ["method", "email", "password", "role", "name", "phone", "country", "city", "birthday", "activity", "file"],
           "properties": {
-            "name": {
+            "method": {
                 "type": "string",
-                "description": "User's name",
-                "example": "Mykola"
+                "enum": ["email"],
+                "description": "Registration method: email"
             },
             "email": {
               "type": "string",
-              "description": "User's email",
+              "description": "User email",
               "format": "email"
             },
             "password": {
               "type": "string",
-              "description": "User's password",
-              "example": "qwerty123"
+              "minLength": 8,
+              "maxLength": 24,
+              "pattern": "^[a-zA-Z0-9]{8,24}$",
+              "description": "User password",
+              "example": "Qw52eRty37"
+            },
+            "role": {
+              "type": "string",
+              "enum": ["child", "speaker"],
+              "description": "User role"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 55,
+              "description": "User name",
+              "example": "Тарас Діброва"
+            },
+            "phone": {
+              "type": "string",
+              "pattern": "^\\+?\\d{1,4}?[-.\\s]?(\\(?\\d{1,4}\\)?[-.\\s]?)?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$",
+              "description": "User's phone",
+              "example": "+380123456789"
+            },
+            "country": {
+              "type": "string",
+              "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+              "description": "User's country",
+              "example": "Україна"
+            },
+            "city": {
+              "type": "string",
+              "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+              "description": "User's city",
+              "example": "Київ"
+            },
+            "birthday": {
+              "type": "string",
+              "pattern": "^\\d{2}-\\d{2}-\\d{4}$",
+              "description": "User's birthday",
+              "example": "19-01-2010"
+            },
+            "activity": {
+              "type": "string",
+              "maxLength": 55,
+              "description": "User activity",
+              "example": "Фермер"
+            },
+            "file": {
+              "type": "string",
+              "format": "binary",
+              "description": "User avatar file being uploaded (maximum size: 10 MB)"
             }
           }
         },
-        "RegistrationResponse": {
+        "RegistrationWithEmailResponse": {
             "type": "object",
             "properties": {
-              "email": {
+              "message": {
                 "type": "string",
-                "description": "User's email",
-                "format": "email"
-              },
-              "userId": {
-                "type": "number",
-                "description": "User's id",
-                "example": "32143232436545474"
+                "description": "Message of successful sending of email for verification",
+                "example": "Verify email send success"
               }
           },
-          "example": [
-            { "email": "1@gmail.com", "subscription": "starter" }
-          ]
+          "example": {
+            "message": "Verify email send success" 
+          }
+        },
+        "RegistrationResponse": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "User's access token",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8"
+            },
+            "user": {
+              "type": "object",
+              "description": "New user object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "description": "User's id",
+                  "example": "7543"
+                },
+                "method": {
+                  "type": "string",
+                  "description": "Registration method",
+                  "example": "google"
+                },
+                "email": {
+                  "type": "string",
+                  "description": "User email",
+                  "example": "tarasdibrova@gmail.com"
+                },
+                "role": {
+                  "type": "string",
+                  "description": "User role",
+                  "example": "speaker"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "User name",
+                  "example": "Тарас Діброва"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "User's phone",
+                  "example": "+380123456789"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "User's country",
+                  "example": "Україна"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "User's city",
+                  "example": "Київ"
+                },
+                "activity": {
+                  "type": "string",
+                  "description": "User activity",
+                  "example": "Фермер"
+                },
+                "avatar": {
+                  "type": "string",
+                  "description": "User's avatar url",
+                  "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
+                }
+              },
+              "example": {
+                "_id": "7543",
+                "method": "google",
+                "email": "tarasdibrova@gmail.com",
+                "role": "speaker",
+                "name": "Тарас Діброва",
+                "phone": "+380123456789",
+                "country": "Україна",
+                "city": "Київ",
+                "activity": "Фермер",
+                "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+              }
+            }
+          },
+          "example": {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
+            "user": {
+              "_id": "7543",
+              "method": "google",
+              "email": "tarasdibrova@gmail.com",
+              "role": "speaker",
+              "name": "Тарас Діброва",
+              "phone": "+380123456789",
+              "country": "Україна",
+              "city": "Київ",
+              "activity": "Фермер",
+              "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+            }
+          }
         }
       },
       "securitySchemes": {
@@ -122,3 +280,4 @@
       }
     }
   }
+}

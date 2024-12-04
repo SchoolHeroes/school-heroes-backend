@@ -10,32 +10,32 @@ const {
 const registerSchema = Joi.object({
   method: Joi.string().valid("email", "google", "apple").required(),
   
-  name: Joi.string().min(2).max(30).required(),
+  name: Joi.string().min(2).max(55).required(),
   role: Joi.string().valid("child", "speaker").required(),
   phone: Joi.string().pattern(phoneRegexp).required(),
   country: Joi.string().pattern(locationRegexp).required(),
   city: Joi.string().pattern(locationRegexp).required(),
 
-  email: Joi.when('method', {
+  email: Joi.string().pattern(emailRegexp).when('method', {
     is: 'email',
-    then: Joi.string().pattern(emailRegexp).required(),
-    otherwise: Joi.string().optional(),
+    then: Joi.required(),
+    otherwise: Joi.optional(),
   }),
-  password: Joi.when('method', {
+  password: Joi.string().min(8).max(24).pattern(passwordRegex).when('method', {
     is: 'email',
-    then: Joi.string().min(8).max(24).pattern(passwordRegex).required(),
+    then: Joi.required(),
     otherwise: Joi.forbidden(),
   }),
 
-  google_id: Joi.when('method', {
+  google_id: Joi.string().when('method', {
     is: "google",
-    then: Joi.string().required(),
+    then: Joi.required(),
     otherwise: Joi.forbidden(),
   }),
 
-  apple_id: Joi.when('method', {
+  apple_id: Joi.string().when('method', {
     is: "apple",
-    then: Joi.string().required(),
+    then: Joi.required(),
     otherwise: Joi.forbidden(),
   }),
 
@@ -44,7 +44,7 @@ const registerSchema = Joi.object({
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
-  activity: Joi.string().when('role', {
+  activity: Joi.string().max(55).when('role', {
     is: 'speaker',
     then: Joi.required(),
     otherwise: Joi.optional(),
@@ -58,6 +58,7 @@ const emailAuthSchema = Joi.object({
 
 const tokenAuthSchema = Joi.object({
   token: Joi.string().required(),
+  platform: Joi.string().valid("android", "ios").required(),
 });
 
 // const updateUserSchema = Joi.object({

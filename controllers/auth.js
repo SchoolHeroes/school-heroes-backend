@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs/promises');
 const { nanoid } = require('nanoid');
 const { PrismaClient } = require('@prisma/client');
-const { httpError, ctrlWrapper, sendEmail, getGoogleId, getAppleId } = require('../helpers');
+const { httpError, ctrlWrapper, sendEmail, getGoogleId, getAppleId, convertToDateTime } = require('../helpers');
 const { uploadFileToCloudinary, deleteFileFromCloudinary } = require("../helpers/cloudinary");
 const { log } = require('console');
 require('dotenv').config();
@@ -25,7 +25,11 @@ const register = async (req, res) => {
   const fileURL = downloadedFile.secure_url;
   data.avatar = fileURL;
 
-  const { method, email, password } = data;
+  const { method, email, password, birthday } = data;
+
+  if (birthday) {
+    data.birthday = convertToDateTime(birthday);
+  }
 
   if (method === 'email') {
     const user = await prisma.user.findUnique({
@@ -73,7 +77,7 @@ const register = async (req, res) => {
 
   const jwtToken = generateToken(newUser.id);
 
-  res.status(201).json({ token: jwtToken, newUser });
+  res.status(201).json({ token: jwtToken, user: newUser });
 };
 
 const emailAuth = async (req, res) => {
@@ -110,8 +114,8 @@ const emailAuth = async (req, res) => {
 };
 
 const googleAuth = async (req, res) => {
-  const { token } = req.body;
-  const data = getGoogleId(token);
+  const { token, platform } = req.body;
+  const data = getGoogleId({token, platform});
   const { google_id, email } = data;
 
   const user = await prisma.user.findFirst({
