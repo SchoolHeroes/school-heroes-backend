@@ -92,7 +92,7 @@ const emailAuth = async (req, res) => {
     }
   
     if (!user.verify_email) {
-        throw httpError(401, "Email not verified");
+        throw httpError(403, "Email not verified");
     }
     
     const passwordCompare = await bcrypt.compare(password, user.password);
@@ -128,7 +128,7 @@ const googleAuth = async (req, res) => {
   });
 
     if (!user) {
-      return res.status(200).json({ message: "Additional information is required for registration.", data });
+      return res.status(202).json({ message: "Additional information is required for registration.", data });
     }
   
   let updatedUser = user;
@@ -165,7 +165,7 @@ const appleAuth = async (req, res) => {
   });
 
     if (!user) {
-      return res.status(200).json({ message: "Additional information is required for registration.", data });
+      return res.status(202).json({ message: "Additional information is required for registration.", data });
     }
   
   let updatedUser = user;
