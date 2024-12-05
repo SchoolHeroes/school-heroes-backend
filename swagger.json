@@ -9,9 +9,9 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "consumes": ["application/json", "multipart/form-data"],
-  "produces": ["application/json"],
-  "servers": [{ "url": "https://school-heroes-backend.onrender.com/api" }],
+  "servers": [
+    { "url": "https://school-heroes-backend.onrender.com/api" }
+  ],
   "tags": [
     {
       "name": "Auth",
@@ -39,7 +39,6 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Create a new user",
-        "parameters": [],
         "requestBody": {
           "description": "Registration's object",
           "required": true,
@@ -73,12 +72,138 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
+            "description": "Bad request (invalid request body)"
           },
           "409": {
-            "description": "Email already in use",
-            "content": {}
+            "description": "Email already in use"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login user with email and password",
+        "requestBody": {
+          "description": "Login's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginWithEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginWithEmailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)"
+          },
+          "401": {
+            "description": "Invalid Email or password"
+          },
+          "403": {
+            "description": "Email not verified"
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login user with Google",
+        "requestBody": {
+          "description": "Login's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginWithGoogleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginWithGoogleResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginWithGoogleAcceptedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)"
+          },
+          "401": {
+            "description": "Invalid Google token"
+          }
+        }
+      }
+    },
+    "/auth/apple": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login user with Apple",
+        "requestBody": {
+          "description": "Login's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginWithAppleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginWithAppleResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginWithAppleAcceptedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)"
+          },
+          "401": {
+            "description": "Invalid Apple token"
           }
         }
       }
@@ -87,188 +212,832 @@
   "components": {
     "schemas": {
       "RegistrationRequest": {
-        "type": "object",
         "oneOf": [
-          {"$ref": "#/components/schemas/RegisterWithEmail"},
-          {"$ref": "#/components/schemas/RegisterWithGoogle"},
-          {"$ref": "#/components/schemas/RegisterWithApple"}
-        ],
-        "RegisterWithEmail": {
-          "type": "object",
-          "required": ["method", "email", "password", "role", "name", "phone", "country", "city", "birthday", "activity", "file"],
-          "properties": {
-            "method": {
-                "type": "string",
-                "enum": ["email"],
-                "description": "Registration method: email"
-            },
-            "email": {
+          { "$ref": "#/components/schemas/RegisterChildWithEmail" },
+          { "$ref": "#/components/schemas/RegisterSpeakerWithEmail" },
+          { "$ref": "#/components/schemas/RegisterChildWithGoogle" },
+          { "$ref": "#/components/schemas/RegisterSpeakerWithGoogle" },
+          { "$ref": "#/components/schemas/RegisterChildWithApple" },
+          { "$ref": "#/components/schemas/RegisterSpeakerWithApple" }
+        ]
+      },
+      "RegisterChildWithEmail": {
+        "type": "object",
+        "required": ["method", "email", "password", "role", "name", "phone", "country", "city", "birthday", "file"],
+        "properties": {
+          "method": {
               "type": "string",
-              "description": "User email",
-              "format": "email"
-            },
-            "password": {
+              "enum": ["email"],
+              "description": "Registration method: email"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 24,
+            "pattern": "^[a-zA-Z0-9]{8,24}$",
+            "description": "User password",
+            "example": "Qw52eRty37"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["child"],
+            "description": "User role"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 55,
+            "description": "User name",
+            "example": "Катерина Морська"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?\\d{1,4}?[-.\\s]?(\\(?\\d{1,4}\\)?[-.\\s]?)?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$",
+            "description": "User's phone",
+            "example": "+380123456789"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's country",
+            "example": "Україна"
+          },
+          "city": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's city",
+            "example": "Київ"
+          },
+          "birthday": {
+            "type": "string",
+            "pattern": "^\\d{2}-\\d{2}-\\d{4}$",
+            "description": "User's birthday",
+            "example": "19-01-2010"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "User avatar file being uploaded (maximum size: 8 MB)"
+          }
+        }
+      },
+      "RegisterSpeakerWithEmail": {
+        "type": "object",
+        "required": ["method", "email", "password", "role", "name", "phone", "country", "city", "activity", "file"],
+        "properties": {
+          "method": {
               "type": "string",
-              "minLength": 8,
-              "maxLength": 24,
-              "pattern": "^[a-zA-Z0-9]{8,24}$",
-              "description": "User password",
-              "example": "Qw52eRty37"
-            },
-            "role": {
+              "enum": ["email"],
+              "description": "Registration method: email"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 24,
+            "pattern": "^[a-zA-Z0-9]{8,24}$",
+            "description": "User password",
+            "example": "Qw52eRty37"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["speaker"],
+            "description": "User role"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 55,
+            "description": "User name",
+            "example": "Тарас Діброва"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?\\d{1,4}?[-.\\s]?(\\(?\\d{1,4}\\)?[-.\\s]?)?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$",
+            "description": "User's phone",
+            "example": "+380123456789"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's country",
+            "example": "Україна"
+          },
+          "city": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's city",
+            "example": "Київ"
+          },
+          "activity": {
+            "type": "string",
+            "maxLength": 55,
+            "description": "User activity",
+            "example": "Фермер"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "User avatar file being uploaded (maximum size: 8 MB)"
+          }
+        }
+      },
+      "RegisterChildWithGoogle": {
+        "type": "object",
+        "required": ["method", "google_id", "role", "name", "phone", "country", "city", "birthday", "file"],
+        "properties": {
+          "method": {
               "type": "string",
-              "enum": ["child", "speaker"],
-              "description": "User role"
-            },
-            "name": {
+              "enum": ["google"],
+              "description": "Registration method: google"
+          },
+          "google_id": {
+            "type": "string",
+            "description": "User googleId"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["child"],
+            "description": "User role"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 55,
+            "description": "User name",
+            "example": "Катерина Морська"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?\\d{1,4}?[-.\\s]?(\\(?\\d{1,4}\\)?[-.\\s]?)?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$",
+            "description": "User's phone",
+            "example": "+380123456789"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's country",
+            "example": "Україна"
+          },
+          "city": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's city",
+            "example": "Київ"
+          },
+          "birthday": {
+            "type": "string",
+            "pattern": "^\\d{2}-\\d{2}-\\d{4}$",
+            "description": "User's birthday",
+            "example": "19-01-2010"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "User avatar file being uploaded (maximum size: 8 MB)"
+          }
+        }
+      },
+      "RegisterSpeakerWithGoogle": {
+        "type": "object",
+        "required": ["method", "google_id", "role", "name", "phone", "country", "city", "activity", "file"],
+        "properties": {
+          "method": {
               "type": "string",
-              "minLength": 2,
-              "maxLength": 55,
-              "description": "User name",
-              "example": "Тарас Діброва"
-            },
-            "phone": {
+              "enum": ["google"],
+              "description": "Registration method: google"
+          },
+          "google_id": {
+            "type": "string",
+            "description": "User googleId"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["speaker"],
+            "description": "User role"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 55,
+            "description": "User name",
+            "example": "Тарас Діброва"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?\\d{1,4}?[-.\\s]?(\\(?\\d{1,4}\\)?[-.\\s]?)?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$",
+            "description": "User's phone",
+            "example": "+380123456789"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's country",
+            "example": "Україна"
+          },
+          "city": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's city",
+            "example": "Київ"
+          },
+          "activity": {
+            "type": "string",
+            "maxLength": 55,
+            "description": "User activity",
+            "example": "Фермер"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "User avatar file being uploaded (maximum size: 8 MB)"
+          }
+        }
+      },
+      "RegisterChildWithApple": {
+        "type": "object",
+        "required": ["method", "apple_id", "role", "name", "phone", "country", "city", "birthday", "file"],
+        "properties": {
+          "method": {
               "type": "string",
-              "pattern": "^\\+?\\d{1,4}?[-.\\s]?(\\(?\\d{1,4}\\)?[-.\\s]?)?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$",
-              "description": "User's phone",
-              "example": "+380123456789"
-            },
-            "country": {
+              "enum": ["apple"],
+              "description": "Registration method: apple"
+          },
+          "apple_id": {
+            "type": "string",
+            "description": "User appleId"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["child"],
+            "description": "User role"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 55,
+            "description": "User name",
+            "example": "Катерина Морська"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?\\d{1,4}?[-.\\s]?(\\(?\\d{1,4}\\)?[-.\\s]?)?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$",
+            "description": "User's phone",
+            "example": "+380123456789"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's country",
+            "example": "Україна"
+          },
+          "city": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's city",
+            "example": "Київ"
+          },
+          "birthday": {
+            "type": "string",
+            "pattern": "^\\d{2}-\\d{2}-\\d{4}$",
+            "description": "User's birthday",
+            "example": "19-01-2010"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "User avatar file being uploaded (maximum size: 8 MB)"
+          }
+        }
+      },
+      "RegisterSpeakerWithApple": {
+        "type": "object",
+        "required": ["method", "apple_id", "role", "name", "phone", "country", "city", "activity", "file"],
+        "properties": {
+          "method": {
               "type": "string",
-              "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
-              "description": "User's country",
-              "example": "Україна"
-            },
-            "city": {
-              "type": "string",
-              "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
-              "description": "User's city",
-              "example": "Київ"
-            },
-            "birthday": {
-              "type": "string",
-              "pattern": "^\\d{2}-\\d{2}-\\d{4}$",
-              "description": "User's birthday",
-              "example": "19-01-2010"
-            },
-            "activity": {
-              "type": "string",
-              "maxLength": 55,
-              "description": "User activity",
-              "example": "Фермер"
-            },
-            "file": {
-              "type": "string",
-              "format": "binary",
-              "description": "User avatar file being uploaded (maximum size: 10 MB)"
-            }
+              "enum": ["apple"],
+              "description": "Registration method: apple"
+          },
+          "apple_id": {
+            "type": "string",
+            "description": "User appleId"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["speaker"],
+            "description": "User role"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 55,
+            "description": "User name",
+            "example": "Тарас Діброва"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?\\d{1,4}?[-.\\s]?(\\(?\\d{1,4}\\)?[-.\\s]?)?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$",
+            "description": "User's phone",
+            "example": "+380123456789"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's country",
+            "example": "Україна"
+          },
+          "city": {
+            "type": "string",
+            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
+            "description": "User's city",
+            "example": "Київ"
+          },
+         "activity": {
+            "type": "string",
+            "maxLength": 55,
+            "description": "User activity",
+            "example": "Фермер"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "User avatar file being uploaded (maximum size: 8 MB)"
+          }
+        }
+      },
+      "RegistrationWithEmailResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message of successful sending of email for verification"
           }
         },
-        "RegistrationWithEmailResponse": {
+        "example": {
+          "message": "Verify email send success" 
+        }
+      },
+      "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "User's access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8"
+          },
+          "user": {
             "type": "object",
             "properties": {
-              "message": {
+              "_id": {
                 "type": "string",
-                "description": "Message of successful sending of email for verification",
-                "example": "Verify email send success"
+                "description": "User's id",
+                "example": "7543"
+              },
+              "method": {
+                "type": "string",
+                "description": "Registration method",
+                "example": "google"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
+                "example": "tarasdibrova@gmail.com"
+              },
+              "role": {
+                "type": "string",
+                "description": "User role",
+                "example": "speaker"
+              },
+              "name": {
+                "type": "string",
+                "description": "User name",
+                "example": "Тарас Діброва"
+              },
+              "phone": {
+                "type": "string",
+                "description": "User's phone",
+                "example": "+380123456789"
+              },
+              "country": {
+                "type": "string",
+                "description": "User's country",
+                "example": "Україна"
+              },
+              "city": {
+                "type": "string",
+                "description": "User's city",
+                "example": "Київ"
+              },
+              "activity": {
+                "type": "string",
+                "description": "User activity",
+                "example": "Фермер"
+              },
+              "avatar": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
               }
-          },
-          "example": {
-            "message": "Verify email send success" 
+            }
           }
         },
-        "RegistrationResponse": {
-          "type": "object",
-          "properties": {
-            "token": {
-              "type": "string",
-              "description": "User's access token",
-              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8"
-            },
-            "user": {
-              "type": "object",
-              "description": "New user object",
-              "properties": {
-                "_id": {
-                  "type": "string",
-                  "description": "User's id",
-                  "example": "7543"
-                },
-                "method": {
-                  "type": "string",
-                  "description": "Registration method",
-                  "example": "google"
-                },
-                "email": {
-                  "type": "string",
-                  "description": "User email",
-                  "example": "tarasdibrova@gmail.com"
-                },
-                "role": {
-                  "type": "string",
-                  "description": "User role",
-                  "example": "speaker"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "User name",
-                  "example": "Тарас Діброва"
-                },
-                "phone": {
-                  "type": "string",
-                  "description": "User's phone",
-                  "example": "+380123456789"
-                },
-                "country": {
-                  "type": "string",
-                  "description": "User's country",
-                  "example": "Україна"
-                },
-                "city": {
-                  "type": "string",
-                  "description": "User's city",
-                  "example": "Київ"
-                },
-                "activity": {
-                  "type": "string",
-                  "description": "User activity",
-                  "example": "Фермер"
-                },
-                "avatar": {
-                  "type": "string",
-                  "description": "User's avatar url",
-                  "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
-                }
+        "example": {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
+          "user": {
+            "_id": "7543",
+            "method": "google",
+            "email": "tarasdibrova@gmail.com",
+            "role": "speaker",
+            "name": "Тарас Діброва",
+            "phone": "+380123456789",
+            "country": "Україна",
+            "city": "Київ",
+            "activity": "Фермер",
+            "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+          }
+        }
+      },
+      "LoginWithEmailRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "minLength": 8,
+            "maxLength": 24,
+            "pattern": "^[a-zA-Z0-9]{8,24}$",
+            "example": "Qw52eRty37"
+          }
+        }
+      },
+      "LoginWithEmailResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "User's access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "User's id",
+                "example": "7543"
               },
-              "example": {
-                "_id": "7543",
-                "method": "google",
-                "email": "tarasdibrova@gmail.com",
-                "role": "speaker",
-                "name": "Тарас Діброва",
-                "phone": "+380123456789",
-                "country": "Україна",
-                "city": "Київ",
-                "activity": "Фермер",
-                "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+              "method": {
+                "type": "string",
+                "description": "Registration method",
+                "example": "email"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
+                "example": "tarasdibrova@gmail.com"
+              },
+              "role": {
+                "type": "string",
+                "description": "User role",
+                "example": "speaker"
+              },
+              "name": {
+                "type": "string",
+                "description": "User name",
+                "example": "Тарас Діброва"
+              },
+              "phone": {
+                "type": "string",
+                "description": "User's phone",
+                "example": "+380123456789"
+              },
+              "country": {
+                "type": "string",
+                "description": "User's country",
+                "example": "Україна"
+              },
+              "city": {
+                "type": "string",
+                "description": "User's city",
+                "example": "Київ"
+              },
+              "activity": {
+                "type": "string",
+                "description": "User activity",
+                "example": "Фермер"
+              },
+              "avatar": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
               }
             }
+          }
+        },
+        "example": {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
+          "user": {
+            "_id": "7543",
+            "method": "email",
+            "email": "tarasdibrova@gmail.com",
+            "role": "speaker",
+            "name": "Тарас Діброва",
+            "phone": "+380123456789",
+            "country": "Україна",
+            "city": "Київ",
+            "activity": "Фермер",
+            "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+          }
+        }
+      },
+      "LoginWithGoogleRequest": {
+        "type": "object",
+        "required": ["token", "platform"],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Google idToken"
           },
-          "example": {
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
-            "user": {
-              "_id": "7543",
-              "method": "google",
-              "email": "tarasdibrova@gmail.com",
-              "role": "speaker",
-              "name": "Тарас Діброва",
-              "phone": "+380123456789",
-              "country": "Україна",
-              "city": "Київ",
-              "activity": "Фермер",
-              "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+          "platform": {
+            "type": "string",
+            "enum": ["android", "ios"],
+            "description": "User device platform"
+          }
+        }
+      },
+      "LoginWithGoogleResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "User's access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "User's id",
+                "example": "7543"
+              },
+              "method": {
+                "type": "string",
+                "description": "Registration method",
+                "example": "google"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
+                "example": "tarasdibrova@gmail.com"
+              },
+              "role": {
+                "type": "string",
+                "description": "User role",
+                "example": "speaker"
+              },
+              "name": {
+                "type": "string",
+                "description": "User name",
+                "example": "Тарас Діброва"
+              },
+              "phone": {
+                "type": "string",
+                "description": "User's phone",
+                "example": "+380123456789"
+              },
+              "country": {
+                "type": "string",
+                "description": "User's country",
+                "example": "Україна"
+              },
+              "city": {
+                "type": "string",
+                "description": "User's city",
+                "example": "Київ"
+              },
+              "activity": {
+                "type": "string",
+                "description": "User activity",
+                "example": "Фермер"
+              },
+              "avatar": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
+              }
             }
           }
+        },
+        "example": {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
+          "user": {
+            "_id": "7543",
+            "method": "google",
+            "email": "tarasdibrova@gmail.com",
+            "role": "speaker",
+            "name": "Тарас Діброва",
+            "phone": "+380123456789",
+            "country": "Україна",
+            "city": "Київ",
+            "activity": "Фермер",
+            "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+          }
+        }
+      },
+      "LoginWithGoogleAcceptedResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The user is logged in to Google. Additional information is required to register in the application.",
+            "example": "Additional information is required for registration" 
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "google_id": {
+              "type": "string",
+              "description": "User googleId",
+              "example": "104292695975191234567"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
+                "example": "tarasdibrova@gmail.com"
+              }
+            }
+          }
+        },
+        "example": {
+          "message": "Additional information is required for registration",
+          "data": {
+            "google_id": "104292695975191234567",
+            "email": "tarasdibrova@gmail.com"
+          } 
+        }
+      },
+      "LoginWithAppleRequest": {
+        "type": "object",
+        "required": ["token", "platform"],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Apple idToken"
+          },
+          "platform": {
+            "type": "string",
+            "enum": ["ios", "android"],
+            "description": "User device platform"
+          }
+        }
+      },
+      "LoginWithAppleResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "User's access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "User's id",
+                "example": "7543"
+              },
+              "method": {
+                "type": "string",
+                "description": "Registration method",
+                "example": "apple"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
+                "example": "tarasdibrova@gmail.com"
+              },
+              "role": {
+                "type": "string",
+                "description": "User role",
+                "example": "speaker"
+              },
+              "name": {
+                "type": "string",
+                "description": "User name",
+                "example": "Тарас Діброва"
+              },
+              "phone": {
+                "type": "string",
+                "description": "User's phone",
+                "example": "+380123456789"
+              },
+              "country": {
+                "type": "string",
+                "description": "User's country",
+                "example": "Україна"
+              },
+              "city": {
+                "type": "string",
+                "description": "User's city",
+                "example": "Київ"
+              },
+              "activity": {
+                "type": "string",
+                "description": "User activity",
+                "example": "Фермер"
+              },
+              "avatar": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
+              }
+            }
+          }
+        },
+        "example": {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
+          "user": {
+            "_id": "7543",
+            "method": "apple",
+            "email": "tarasdibrova@gmail.com",
+            "role": "speaker",
+            "name": "Тарас Діброва",
+            "phone": "+380123456789",
+            "country": "Україна",
+            "city": "Київ",
+            "activity": "Фермер",
+            "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+          }
+        }
+      },
+      "LoginWithAppleAcceptedResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The user is logged in to Apple. Additional information is required to register in the application.",
+            "example": "Additional information is required for registration" 
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "apple_id": {
+                "type": "string",
+                "description": "User appleId",
+                "example": "001345.abcde12345.fghijkl67890mnopq"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
+                "example": "tarasdibrova@gmail.com"
+              }
+            }
+          }
+        },
+        "example": {
+          "message": "Additional information is required for registration",
+          "data": {
+            "apple_id": "001345.abcde12345.fghijkl67890mnopq",
+            "email": "tarasdibrova@gmail.com"
+          } 
         }
       },
       "securitySchemes": {
