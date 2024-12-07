@@ -4,9 +4,8 @@ const path = require('path');
 const fs = require('fs/promises');
 const { nanoid } = require('nanoid');
 const { PrismaClient } = require('@prisma/client');
-const { httpError, ctrlWrapper, sendEmail, getGoogleId, getAppleId, convertToDateTime } = require('../helpers');
+const { httpError, ctrlWrapper, sendEmail, getGoogleId, getAppleId } = require('../helpers');
 const { uploadFileToCloudinary, deleteFileFromCloudinary } = require("../helpers/cloudinary");
-const { log } = require('console');
 require('dotenv').config();
 
 const { JWT_SECRET_KEY, BASE_SERVER_URL } = process.env;
@@ -25,11 +24,7 @@ const register = async (req, res) => {
   const fileURL = downloadedFile.secure_url;
   data.avatar = fileURL;
 
-  const { method, email, password, birthday } = data;
-
-  if (birthday) {
-    data.birthday = convertToDateTime(birthday);
-  }
+  const { method, email, password } = data;
 
   if (method === 'email') {
     const user = await prisma.user.findUnique({
@@ -69,7 +64,7 @@ const register = async (req, res) => {
     await sendEmail(verifyEmail);
 
     return res.status(200).json({
-        message: 'Verify email send success'
+        message: 'We have sent you a verification email. Please confirm your email.'
     });
   }
   
@@ -128,7 +123,7 @@ const googleAuth = async (req, res) => {
   });
 
     if (!user) {
-      return res.status(202).json({ message: "Additional information is required for registration.", data });
+      return res.status(202).json({ message: "Please provide additional information to complete registration in the app.", data });
     }
   
   let updatedUser = user;
@@ -165,7 +160,7 @@ const appleAuth = async (req, res) => {
   });
 
     if (!user) {
-      return res.status(202).json({ message: "Additional information is required for registration.", data });
+      return res.status(202).json({ message: "Please provide additional information to complete registration in the app.", data });
     }
   
   let updatedUser = user;

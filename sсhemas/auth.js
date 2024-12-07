@@ -13,7 +13,9 @@ const registerSchema = Joi.object({
   name: Joi.string().min(2).max(55).required(),
   role: Joi.string().valid("child", "speaker").required(),
   phone: Joi.string().pattern(phoneRegexp).required(),
-  country: Joi.string().pattern(locationRegexp).required(),
+  country: Joi.string().pattern(countryRegexp).required().messages({
+      "string.pattern.base": "Country code must be a valid ISO 3166-1 alpha-2 code (e.g., UA, US)."
+    }),
   city: Joi.string().pattern(locationRegexp).required(),
 
   email: Joi.string().pattern(emailRegexp).when('method', {
@@ -39,7 +41,7 @@ const registerSchema = Joi.object({
     otherwise: Joi.forbidden(),
   }),
 
-  birthday: Joi.string().pattern(dateRegexp).when('role', {
+  birthday: Joi.date().iso().when('role', {
     is: 'child',
     then: Joi.required(),
     otherwise: Joi.optional(),
