@@ -1,9 +1,9 @@
 const Joi = require('joi');
 const {
     emailRegexp,
-    dateRegexp,
     phoneRegexp,
     passwordRegex,
+    countryRegexp,
     locationRegexp,
 } = require("../utils/regexp");
 
@@ -14,7 +14,8 @@ const registerSchema = Joi.object({
   role: Joi.string().valid("child", "speaker").required(),
   phone: Joi.string().pattern(phoneRegexp).required(),
   country: Joi.string().pattern(countryRegexp).required().messages({
-      "string.pattern.base": "Country code must be a valid ISO 3166-1 alpha-2 code (e.g., UA, US)."
+      "string.pattern.base": "Country code must be a valid ISO 3166-1 alpha-2 code (e.g., UA, US).",
+      "any.required": "Country code is required."
     }),
   city: Joi.string().pattern(locationRegexp).required(),
 
