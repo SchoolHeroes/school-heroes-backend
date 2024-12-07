@@ -263,9 +263,9 @@
           },
           "country": {
             "type": "string",
-            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
-            "description": "User's country",
-            "example": "Україна"
+            "pattern": "^[A-Z]{2}$",
+            "description": "User's country code. Must be an ISO 3166-1 alpha-2 code.",
+            "example": "UA"
           },
           "city": {
             "type": "string",
@@ -275,9 +275,9 @@
           },
           "birthday": {
             "type": "string",
-            "pattern": "^\\d{2}-\\d{2}-\\d{4}$",
-            "description": "User's birthday",
-            "example": "19-01-2010"
+            "format": "date-time",
+            "description": "User's date of birth in ISO 8601 format",
+            "example": "2010-01-19T22:00:00Z"
           },
           "file": {
             "type": "string",
@@ -328,9 +328,9 @@
           },
           "country": {
             "type": "string",
-            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
-            "description": "User's country",
-            "example": "Україна"
+            "pattern": "^[A-Z]{2}$",
+            "description": "User's country code. Must be an ISO 3166-1 alpha-2 code.",
+            "example": "UA"
           },
           "city": {
             "type": "string",
@@ -389,9 +389,9 @@
           },
           "country": {
             "type": "string",
-            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
-            "description": "User's country",
-            "example": "Україна"
+            "pattern": "^[A-Z]{2}$",
+            "description": "User's country code. Must be an ISO 3166-1 alpha-2 code.",
+            "example": "UA"
           },
           "city": {
             "type": "string",
@@ -401,9 +401,9 @@
           },
           "birthday": {
             "type": "string",
-            "pattern": "^\\d{2}-\\d{2}-\\d{4}$",
-            "description": "User's birthday",
-            "example": "19-01-2010"
+            "format": "date-time",
+            "description": "User's date of birth in ISO 8601 format",
+            "example": "2010-01-19T22:00:00Z"
           },
           "file": {
             "type": "string",
@@ -450,9 +450,9 @@
           },
           "country": {
             "type": "string",
-            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
-            "description": "User's country",
-            "example": "Україна"
+            "pattern": "^[A-Z]{2}$",
+            "description": "User's country code. Must be an ISO 3166-1 alpha-2 code.",
+            "example": "UA"
           },
           "city": {
             "type": "string",
@@ -511,9 +511,9 @@
           },
           "country": {
             "type": "string",
-            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
-            "description": "User's country",
-            "example": "Україна"
+            "pattern": "^[A-Z]{2}$",
+            "description": "User's country code. Must be an ISO 3166-1 alpha-2 code.",
+            "example": "UA"
           },
           "city": {
             "type": "string",
@@ -523,9 +523,9 @@
           },
           "birthday": {
             "type": "string",
-            "pattern": "^\\d{2}-\\d{2}-\\d{4}$",
-            "description": "User's birthday",
-            "example": "19-01-2010"
+            "format": "date-time",
+            "description": "User's date of birth in ISO 8601 format",
+            "example": "2010-01-19T22:00:00Z"
           },
           "file": {
             "type": "string",
@@ -572,9 +572,9 @@
           },
           "country": {
             "type": "string",
-            "pattern": "^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'’\\s-]{2,50}$",
-            "description": "User's country",
-            "example": "Україна"
+            "pattern": "^[A-Z]{2}$",
+            "description": "User's country code. Must be an ISO 3166-1 alpha-2 code.",
+            "example": "UA"
           },
           "city": {
             "type": "string",
@@ -600,11 +600,12 @@
         "properties": {
           "message": {
             "type": "string",
-            "description": "Message of successful sending of email for verification"
+            "description": "Message of successful sending of email for verification",
+            "example": "We have sent you a verification email. Please confirm your email."
           }
         },
         "example": {
-          "message": "Verify email send success" 
+          "message": "We have sent you a verification email. Please confirm your email." 
         }
       },
       "RegistrationResponse": {
@@ -650,8 +651,8 @@
               },
               "country": {
                 "type": "string",
-                "description": "User's country",
-                "example": "Україна"
+                "description": "User's country code",
+                "example": "UA"
               },
               "city": {
                 "type": "string",
@@ -680,7 +681,7 @@
             "role": "speaker",
             "name": "Тарас Діброва",
             "phone": "+380123456789",
-            "country": "Україна",
+            "country": "UA",
             "city": "Київ",
             "activity": "Фермер",
             "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
@@ -749,8 +750,8 @@
               },
               "country": {
                 "type": "string",
-                "description": "User's country",
-                "example": "Україна"
+                "description": "User's country code",
+                "example": "UA"
               },
               "city": {
                 "type": "string",
@@ -779,7 +780,7 @@
             "role": "speaker",
             "name": "Тарас Діброва",
             "phone": "+380123456789",
-            "country": "Україна",
+            "country": "UA",
             "city": "Київ",
             "activity": "Фермер",
             "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
@@ -844,8 +845,8 @@
               },
               "country": {
                 "type": "string",
-                "description": "User's country",
-                "example": "Україна"
+                "description": "User's country code",
+                "example": "UA"
               },
               "city": {
                 "type": "string",
@@ -874,7 +875,7 @@
             "role": "speaker",
             "name": "Тарас Діброва",
             "phone": "+380123456789",
-            "country": "Україна",
+            "country": "UA",
             "city": "Київ",
             "activity": "Фермер",
             "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
@@ -887,7 +888,7 @@
           "message": {
             "type": "string",
             "description": "The user is logged in to Google. Additional information is required to register in the application.",
-            "example": "Additional information is required for registration" 
+            "example": "Please provide additional information to complete registration in the app." 
           },
           "data": {
             "type": "object",
@@ -906,7 +907,7 @@
           }
         },
         "example": {
-          "message": "Additional information is required for registration",
+          "message": "Please provide additional information to complete registration in the app.",
           "data": {
             "google_id": "104292695975191234567",
             "email": "tarasdibrova@gmail.com"
@@ -971,8 +972,8 @@
               },
               "country": {
                 "type": "string",
-                "description": "User's country",
-                "example": "Україна"
+                "description": "User's country code",
+                "example": "UA"
               },
               "city": {
                 "type": "string",
@@ -1001,7 +1002,7 @@
             "role": "speaker",
             "name": "Тарас Діброва",
             "phone": "+380123456789",
-            "country": "Україна",
+            "country": "UA",
             "city": "Київ",
             "activity": "Фермер",
             "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
@@ -1014,7 +1015,7 @@
           "message": {
             "type": "string",
             "description": "The user is logged in to Apple. Additional information is required to register in the application.",
-            "example": "Additional information is required for registration" 
+            "example": "Please provide additional information to complete registration in the app." 
           },
           "data": {
             "type": "object",
@@ -1033,7 +1034,7 @@
           }
         },
         "example": {
-          "message": "Additional information is required for registration",
+          "message": "Please provide additional information to complete registration in the app.",
           "data": {
             "apple_id": "001345.abcde12345.fghijkl67890mnopq",
             "email": "tarasdibrova@gmail.com"
