@@ -72,7 +72,26 @@ const register = async (req, res) => {
 
   const jwtToken = generateToken(newUser.id);
 
-  res.status(201).json({ token: jwtToken, user: newUser });
+  const authUserInfo =
+  {
+          "_id": newUser.id,
+          "method": newUser.method,
+          "email": newUser.email,
+          "role": newUser.role,
+          "name": newUser.name,
+          "phone": newUser.phone,
+          "country": newUser.country,
+          "city": newUser.city,
+          "avatar": newUser.avatar
+  }
+
+  if(newUser.role === "speaker"){
+    authUserInfo.activity = newUser.activity
+  } else if(newUser.role === "child"){
+    authUserInfo.birthday = newUser.birthday
+  }
+
+  res.status(201).json({ token: jwtToken, user: authUserInfo });
 };
 
 const emailAuth = async (req, res) => {
@@ -118,9 +137,9 @@ const emailAuth = async (req, res) => {
           "avatar": user.avatar
   }
 
-  if(updatedUser.role === "speaker"){
+  if(user.role === "speaker"){
     authUserInfo.activity = user.activity
-  } else {
+  } else if(user.role === "child"){
     authUserInfo.birthday = user.birthday
   }
 
@@ -176,7 +195,7 @@ const googleAuth = async (req, res) => {
 
   if(updatedUser.role === "speaker"){
     authUserInfo.activity = updatedUser.activity
-  } else {
+  } else if(updatedUser.role === "child"){
     authUserInfo.birthday = updatedUser.birthday
   }
 
@@ -232,7 +251,7 @@ const appleAuth = async (req, res) => {
 
   if(updatedUser.role === "speaker"){
     authUserInfo.activity = updatedUser.activity
-  } else {
+  } else if(updatedUser.role === "child"){
     authUserInfo.birthday = updatedUser.birthday
   }
 
