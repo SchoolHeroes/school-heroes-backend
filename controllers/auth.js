@@ -144,19 +144,23 @@ const googleAuth = async (req, res) => {
 
   const authUserInfo =
   {
-      "token": jwtToken,
-      "user": {
           "_id": updatedUser.id,
-          "method": "google",
-          "email": email,
+          "method": updatedUser.method,
+          "email": updatedUser.email,
           "role": updatedUser.role,
           "name": updatedUser.name,
           "phone": updatedUser.phone,
           "country": updatedUser.country,
           "city": updatedUser.city,
-          "activity": updatedUser.activity,
           "avatar": updatedUser.avatar
-      }
+  }
+
+  if(updatedUser.role === "speaker"){
+    authUserInfo.activity = updatedUser.activity
+  } else if(updatedUser.role === "child"){
+    authUserInfo.birthday = updatedUser.birthday
+  } else {
+    return res.status(400).json({ message: "Please provide user role to complete registration in the app.", data });
   }
 
   res.status(200).json({ token: jwtToken, user: authUserInfo });
