@@ -105,7 +105,26 @@ const emailAuth = async (req, res) => {
 
   const jwtToken = generateToken(user.id);
 
-  res.status(200).json({ token: jwtToken, user });
+  const authUserInfo =
+  {
+          "_id": user.id,
+          "method": user.method,
+          "email": user.email,
+          "role": user.role,
+          "name": user.name,
+          "phone": user.phone,
+          "country": user.country,
+          "city": user.city,
+          "avatar": user.avatar
+  }
+
+  if(updatedUser.role === "speaker"){
+    authUserInfo.activity = user.activity
+  } else {
+    authUserInfo.birthday = user.birthday
+  }
+
+  res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
 
 const googleAuth = async (req, res) => {
@@ -198,7 +217,26 @@ const appleAuth = async (req, res) => {
   
   const jwtToken = generateToken(updatedUser.id);
 
-  res.status(200).json({ token: jwtToken, user: updatedUser });
+  const authUserInfo =
+  {
+          "_id": updatedUser.id,
+          "method": updatedUser.method,
+          "email": updatedUser.email,
+          "role": updatedUser.role,
+          "name": updatedUser.name,
+          "phone": updatedUser.phone,
+          "country": updatedUser.country,
+          "city": updatedUser.city,
+          "avatar": updatedUser.avatar
+  }
+
+  if(updatedUser.role === "speaker"){
+    authUserInfo.activity = updatedUser.activity
+  } else {
+    authUserInfo.birthday = updatedUser.birthday
+  }
+
+  res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
 
 module.exports = {
