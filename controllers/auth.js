@@ -72,7 +72,26 @@ const register = async (req, res) => {
 
   const jwtToken = generateToken(newUser.id);
 
-  res.status(201).json({ token: jwtToken, user: newUser });
+  const authUserInfo =
+  {
+          "_id": newUser.id,
+          "method": newUser.method,
+          "email": newUser.email,
+          "role": newUser.role,
+          "name": newUser.name,
+          "phone": newUser.phone,
+          "country": newUser.country,
+          "city": newUser.city,
+          "avatar": newUser.avatar
+  }
+
+  if(newUser.role === "speaker"){
+    authUserInfo.activity = newUser.activity
+  } else if(newUser.role === "child"){
+    authUserInfo.birthday = newUser.birthday
+  }
+
+  res.status(201).json({ token: jwtToken, user: authUserInfo });
 };
 
 const emailAuth = async (req, res) => {
@@ -105,7 +124,26 @@ const emailAuth = async (req, res) => {
 
   const jwtToken = generateToken(user.id);
 
-  res.status(200).json({ token: jwtToken, user });
+  const authUserInfo =
+  {
+          "_id": user.id,
+          "method": user.method,
+          "email": user.email,
+          "role": user.role,
+          "name": user.name,
+          "phone": user.phone,
+          "country": user.country,
+          "city": user.city,
+          "avatar": user.avatar
+  }
+
+  if(user.role === "speaker"){
+    authUserInfo.activity = user.activity
+  } else if(user.role === "child"){
+    authUserInfo.birthday = user.birthday
+  }
+
+  res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
 
 const googleAuth = async (req, res) => {
@@ -142,7 +180,26 @@ const googleAuth = async (req, res) => {
   
   const jwtToken = generateToken(updatedUser.id);
 
-  res.status(200).json({ token: jwtToken, user: updatedUser });
+  const authUserInfo =
+  {
+          "_id": updatedUser.id,
+          "method": updatedUser.method,
+          "email": updatedUser.email,
+          "role": updatedUser.role,
+          "name": updatedUser.name,
+          "phone": updatedUser.phone,
+          "country": updatedUser.country,
+          "city": updatedUser.city,
+          "avatar": updatedUser.avatar
+  }
+
+  if(updatedUser.role === "speaker"){
+    authUserInfo.activity = updatedUser.activity
+  } else if(updatedUser.role === "child"){
+    authUserInfo.birthday = updatedUser.birthday
+  }
+
+  res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
 
 const appleAuth = async (req, res) => {
@@ -179,7 +236,26 @@ const appleAuth = async (req, res) => {
   
   const jwtToken = generateToken(updatedUser.id);
 
-  res.status(200).json({ token: jwtToken, user: updatedUser });
+  const authUserInfo =
+  {
+          "_id": updatedUser.id,
+          "method": updatedUser.method,
+          "email": updatedUser.email,
+          "role": updatedUser.role,
+          "name": updatedUser.name,
+          "phone": updatedUser.phone,
+          "country": updatedUser.country,
+          "city": updatedUser.city,
+          "avatar": updatedUser.avatar
+  }
+
+  if(updatedUser.role === "speaker"){
+    authUserInfo.activity = updatedUser.activity
+  } else if(updatedUser.role === "child"){
+    authUserInfo.birthday = updatedUser.birthday
+  }
+
+  res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
 
 module.exports = {
