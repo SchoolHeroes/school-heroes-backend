@@ -142,7 +142,24 @@ const googleAuth = async (req, res) => {
   
   const jwtToken = generateToken(updatedUser.id);
 
-  res.status(200).json({ token: jwtToken, user: updatedUser });
+  const authUserInfo =
+  {
+      "token": jwtToken,
+      "user": {
+          "_id": updatedUser.id,
+          "method": "google",
+          "email": email,
+          "role": updatedUser.role,
+          "name": updatedUser.name,
+          "phone": updatedUser.phone,
+          "country": updatedUser.country,
+          "city": updatedUser.city,
+          "activity": updatedUser.activity,
+          "avatar": updatedUser.avatar
+      }
+  }
+
+  res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
 
 const appleAuth = async (req, res) => {
