@@ -4,6 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const intervalTask = require('./helpers/intervalTask');
 
 const { dbRouter } = require("./db");
 const authRouter = require('./routes/api/auth')
@@ -36,5 +37,7 @@ app.use((err, req, res, next) => {
   const {status = 500, message = 'Server error'} = err;
   res.status(status).json({ message })
 })
+
+intervalTask();
 
 module.exports = app

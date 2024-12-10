@@ -13,4 +13,8 @@ router.post("/google", validateBody(tokenAuthSchema), ctrl.googleAuth);
 
 router.post("/apple", validateBody(tokenAuthSchema), ctrl.appleAuth);
 
+router.get("/interval", (req, res) => { 
+    res.json({message: "Server online"});
+});
+
 module.exports = router;
