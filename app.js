@@ -4,7 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
-const { apiLimiter } = require('./middlewares/limiter');
+// const { apiLimiter } = require('./middlewares/limiter');
 const intervalTask = require('./helpers/intervalTask');
 
 const { dbRouter } = require("./db");
@@ -12,7 +12,7 @@ const authRouter = require('./routes/api/auth')
 
 const app = express()
 
-app.use(apiLimiter);
+// app.use(apiLimiter);
 app.use(cors({
   origin: [
     'http://localhost:3000',

@@ -104,6 +104,7 @@ const emailAuth = async (req, res) => {
   const user = await prisma.user.findUnique({
     where: { email },
   });
+console.log('user', user);
 
   if (!user) {
       const errorMessage = langMessages.invalid_email;
