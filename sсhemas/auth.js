@@ -64,13 +64,18 @@ const tokenAuthSchema = Joi.object({
   platform: Joi.string().valid("android", "ios").required(),
 });
 
+const emailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required(),
+});
+
 // const updateUserSchema = Joi.object({
 //   passions: Joi.string().default(''),
 //   address: Joi.string().default(''),
 // });
 
 module.exports = {
-    registerSchema,
-    emailAuthSchema,
-    tokenAuthSchema,
+  registerSchema,
+  emailAuthSchema,
+  tokenAuthSchema,
+  emailSchema,
 };

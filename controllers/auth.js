@@ -6,6 +6,7 @@ const { nanoid } = require('nanoid');
 const { PrismaClient } = require('@prisma/client');
 const { httpError, ctrlWrapper, sendEmail, getGoogleId, getAppleId } = require('../helpers');
 const { uploadFileToCloudinary, deleteFileFromCloudinary } = require("../helpers/cloudinary");
+const messages = require('../utils/messages.json');
 require('dotenv').config();
 
 const { JWT_SECRET_KEY, BASE_SERVER_URL } = process.env;
@@ -17,6 +18,7 @@ const generateToken = (userId) => {
 };
 
 const register = async (req, res) => {
+  const langMessages = messages[req.language];
   const { file } = req;
   const data = req.body;
   
@@ -32,7 +34,8 @@ const register = async (req, res) => {
     });
 
     if (user && user.verify_email) {
-      throw httpError(409, "Email already in use");
+      const errorMessage = langMessages.email_use;
+      throw httpError(409, errorMessage);
     }
 
     let verificationToken;
@@ -64,7 +67,7 @@ const register = async (req, res) => {
     await sendEmail(verifyEmail);
 
     return res.status(200).json({
-        message: 'We have sent you a verification email. Please confirm your email.'
+        message: langMessages.sent_verification_email
     });
   }
   
@@ -95,24 +98,28 @@ const register = async (req, res) => {
 };
 
 const emailAuth = async (req, res) => {
+  const langMessages = messages[req.language];
   const { email, password } = req.body;
   
   const user = await prisma.user.findUnique({
     where: { email },
   });
 
-    if (!user) {
-      throw httpError(401, "Invalid Email");
+  if (!user) {
+      const errorMessage = langMessages.invalid_email;
+      throw httpError(401, errorMessage);
     }
   
-    if (!user.verify_email) {
-        throw httpError(403, "Email not verified");
+  if (!user.verify_email) {
+      const errorMessage = langMessages.email_not_verified;
+      throw httpError(403, errorMessage);
     }
     
     const passwordCompare = await bcrypt.compare(password, user.password);
     
-    if (!passwordCompare) {
-      throw httpError(401, 'Invalid password');
+  if (!passwordCompare) {
+      const errorMessage = langMessages.invalid_password;
+      throw httpError(401, errorMessage);
     }
 
     if (user.method !== 'email') {
@@ -147,7 +154,9 @@ const emailAuth = async (req, res) => {
 };
 
 const googleAuth = async (req, res) => {
+  const langMessages = messages[req.language];
   const { token, platform } = req.body;
+
   const data = getGoogleId({token, platform});
   const { google_id, email } = data;
 
@@ -161,7 +170,7 @@ const googleAuth = async (req, res) => {
   });
 
     if (!user) {
-      return res.status(202).json({ message: "Please provide additional information to complete registration in the app.", data });
+      return res.status(202).json({ message: langMessages.add_info_registration, data });
     }
   
   let updatedUser = user;
@@ -203,7 +212,9 @@ const googleAuth = async (req, res) => {
 };
 
 const appleAuth = async (req, res) => {
+  const langMessages = messages[req.language];
   const { token } = req.body;
+
   const data = getAppleId(token);
   const { apple_id, email } = data;
 
@@ -217,7 +228,7 @@ const appleAuth = async (req, res) => {
   });
 
     if (!user) {
-      return res.status(202).json({ message: "Please provide additional information to complete registration in the app.", data });
+      return res.status(202).json({ message: langMessages.add_info_registration, data });
     }
   
   let updatedUser = user;
@@ -258,9 +269,45 @@ const appleAuth = async (req, res) => {
   res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
 
+const resendVerifyEmail = async (req, res) => {
+  const langMessages = messages[req.language];
+  const {email} = req.body;
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    const errorMessage = langMessages.user_not_found;
+    throw httpError(404, errorMessage);
+  }
+
+  if (user.verify_email) {
+    const errorMessage = langMessages.email_verified;
+    throw httpError(409, errorMessage);
+  }
+
+  const verifyEmail = {
+    to: [{email}],
+    subject: "Підтвердження адреси електронної пошти у додатку «Школа Героїв»",
+    html: `
+      <p>
+          <a target="_blank" href="${BASE_SERVER_URL}/api/auth/verify/${user.verification_token}">Натисніть тут</a> для підтвердження адреси вашої електронної пошти
+      </p>
+      `
+  };
+  
+  await sendEmail(verifyEmail);
+
+  res.status(200).json({
+    message: langMessages.sent_verification_email
+  });
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   emailAuth: ctrlWrapper(emailAuth),
   googleAuth: ctrlWrapper(googleAuth),
   appleAuth: ctrlWrapper(appleAuth),
+  resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
 }

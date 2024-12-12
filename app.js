@@ -4,6 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const { apiLimiter } = require('./middlewares/limiter');
 const intervalTask = require('./helpers/intervalTask');
 
 const { dbRouter } = require("./db");
@@ -11,6 +12,7 @@ const authRouter = require('./routes/api/auth')
 
 const app = express()
 
+app.use(apiLimiter);
 app.use(cors({
   origin: [
     'http://localhost:3000',
@@ -19,9 +21,9 @@ app.use(cors({
   ],
   methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true
-}))
-app.use(express.json())
-app.use(express.static('public'))
+}));
+app.use(express.json());
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.text({ type: 'text/plain' }));
 
