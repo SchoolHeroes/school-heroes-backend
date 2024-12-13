@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const { apiLimiter } = require('./middlewares/limiter');
+const { detectLangByHeader } = require('./middlewares');
 const intervalTask = require('./helpers/intervalTask');
 
 const { dbRouter } = require("./db");
@@ -21,7 +22,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
-
+app.use(detectLangByHeader);
 app.use(cors({
   origin: [
     'http://localhost:3000',
