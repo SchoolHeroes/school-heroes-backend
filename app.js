@@ -1,5 +1,6 @@
-const express = require('express')
-const cors = require('cors')
+const express = require('express');
+const cors = require('cors');
+const session = require('express-session');
 
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express');
@@ -13,6 +14,14 @@ const authRouter = require('./routes/api/auth')
 const app = express()
 
 app.use(apiLimiter);
+
+app.use(session({
+    secret: process.env.SESSION_SECRET_KEY, 
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
+}));
+
 app.use(cors({
   origin: [
     'http://localhost:3000',
