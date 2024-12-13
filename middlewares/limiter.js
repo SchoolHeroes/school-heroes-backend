@@ -4,17 +4,17 @@ const { RedisStore } = require('rate-limit-redis');
 
 const redisClient = new Redis(process.env.REDIS_URL);
 
-redisClient.on('connect', () => {
-    console.log('Redis successfully connected');
-});
-redisClient.on('error', (err) => {
-    console.error('Redis Error:', err);
-});
+// redisClient.on('connect', () => {
+//     console.log('Redis successfully connected');
+// });
+// redisClient.on('error', (err) => {
+//     console.error('Redis Error:', err);
+// });
 
 const apiLimiter = rateLimit({
-    store: new RedisStore({
-        sendCommand: (...args) => redisClient.call(...args),
-    }),
+    // store: new RedisStore({
+    //     sendCommand: (...args) => redisClient.call(...args),
+    // }),
     windowMs: 1 * 60 * 1000, 
     max: 3, 
     keyGenerator: (req) => req.headers['x-forwarded-for'] || req.ip,
