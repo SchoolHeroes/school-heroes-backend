@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/register", detectLangByHeader, upload.single("file"), checkFileSize, validateBody(registerSchema), ctrl.register);
 
-router.post("/login", detectLangByHeader, validateBody(emailAuthSchema), ctrl.emailAuth);
+router.post("/login", validateBody(emailAuthSchema), ctrl.emailAuth);
 
 router.post("/google", detectLangByHeader, validateBody(tokenAuthSchema), ctrl.googleAuth);
 
