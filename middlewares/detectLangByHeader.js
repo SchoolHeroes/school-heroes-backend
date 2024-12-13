@@ -1,7 +1,7 @@
 const detectLangByHeader = (req, res, next) => {
     console.log(req.headers);
     
-    const acceptedLanguages = req.headers['Accept-Language'];
+    const acceptedLanguages = req.headers['accept-language'];
     console.log('acceptedLanguages', acceptedLanguages);
     
     const defaultLanguage = 'en'; 
