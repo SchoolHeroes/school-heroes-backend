@@ -16,7 +16,7 @@ const apiLimiter = rateLimit({
     //     sendCommand: (...args) => redisClient.call(...args),
     // }),
     windowMs: 2 * 60 * 1000, 
-    max: 3, 
+    max: 5, 
     // keyGenerator: (req) => {
     //     const forwarded = req.headers['x-forwarded-for'];
     //     const clientIp = forwarded ? forwarded.split(',')[0].trim() : req.ip;
