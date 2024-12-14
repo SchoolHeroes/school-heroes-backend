@@ -52,7 +52,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Successful operation (email sent to verify email address)",
             "content": {
               "application/json": {
                 "schema": {
@@ -72,10 +72,24 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)"
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Відсутнє обов'язкове поле 'телефон'."
+                } 
+              }
+            }
           },
           "409": {
-            "description": "Email already in use"
+            "description": "Conflict (email already in use)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Вказана електронна адреса вже використовується."
+                } 
+              }
+            }
           }
         }
       }
@@ -107,13 +121,34 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)"
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Відсутнє обов'язкове поле 'email'."
+                } 
+              }
+            }
           },
           "401": {
-            "description": "Invalid Email or password"
+            "description": "Unauthorized (invalid email or password)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Недійсний пароль."
+                } 
+              }
+            }
           },
           "403": {
-            "description": "Email not verified"
+            "description": "Forbidden (email not verified)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не підтверджена адреса електронної пошти. Будь ласка, підтвердіть свою електронну адресу."
+                } 
+              }
+            }
           }
         }
       }
@@ -145,7 +180,7 @@
             }
           },
           "202": {
-            "description": "Successful operation",
+            "description": "Successful operation (Google token confirmation, continue registration in the application).",
             "content": {
               "application/json": {
                 "schema": {
@@ -155,10 +190,24 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)"
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Відсутнє обов'язкове поле 'token'."
+                } 
+              }
+            }
           },
           "401": {
-            "description": "Invalid Google token"
+            "description": "Unauthorized (invalid Google token)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Недійсний Google токен."
+                } 
+              }
+            }
           }
         }
       }
@@ -190,7 +239,7 @@
             }
           },
           "202": {
-            "description": "Successful operation",
+            "description": "Successful operation (Apple token confirmation, continue registration in the application).",
             "content": {
               "application/json": {
                 "schema": {
@@ -200,10 +249,24 @@
             }
           },
           "400": {
-            "description": "Bad request (invalid request body)"
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Відсутнє обов'язкове поле 'token'."
+                } 
+              }
+            }
           },
           "401": {
-            "description": "Invalid Apple token"
+            "description": "Unauthorized (invalid Apple token)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Недійсний Apple токен."
+                } 
+              }
+            }
           }
         }
       }
@@ -601,11 +664,11 @@
           "message": {
             "type": "string",
             "description": "Message of successful sending of email for verification",
-            "example": "We have sent you a verification email. Please confirm your email."
+            "example": "Ми надіслали вам електронний лист для підтвердження. Будь ласка, підтвердьте свою електронну адресу."
           }
         },
         "example": {
-          "message": "We have sent you a verification email. Please confirm your email." 
+          "message": "Ми надіслали вам електронний лист для підтвердження. Будь ласка, підтвердьте свою електронну адресу." 
         }
       },
       "RegistrationResponse": {
@@ -888,7 +951,7 @@
           "message": {
             "type": "string",
             "description": "The user is logged in to Google. Additional information is required to register in the application.",
-            "example": "Please provide additional information to complete registration in the app." 
+            "example": "Будь ласка, надайте додаткову інформацію, щоб завершити реєстрацію в додатку." 
           },
           "data": {
             "type": "object",
@@ -907,7 +970,7 @@
           }
         },
         "example": {
-          "message": "Please provide additional information to complete registration in the app.",
+          "message": "Будь ласка, надайте додаткову інформацію, щоб завершити реєстрацію в додатку.",
           "data": {
             "google_id": "104292695975191234567",
             "email": "tarasdibrova@gmail.com"
@@ -1015,7 +1078,7 @@
           "message": {
             "type": "string",
             "description": "The user is logged in to Apple. Additional information is required to register in the application.",
-            "example": "Please provide additional information to complete registration in the app." 
+            "example": "Будь ласка, надайте додаткову інформацію, щоб завершити реєстрацію в додатку." 
           },
           "data": {
             "type": "object",
@@ -1034,7 +1097,7 @@
           }
         },
         "example": {
-          "message": "Please provide additional information to complete registration in the app.",
+          "message": "Будь ласка, надайте додаткову інформацію, щоб завершити реєстрацію в додатку.",
           "data": {
             "apple_id": "001345.abcde12345.fghijkl67890mnopq",
             "email": "tarasdibrova@gmail.com"
