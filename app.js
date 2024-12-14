@@ -15,14 +15,6 @@ const authRouter = require('./routes/api/auth')
 const app = express()
 
 app.use(apiLimiter);
-
-app.use(session({
-    secret: process.env.SESSION_SECRET_KEY, 
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
-}));
-app.use(detectLangByHeader);
 app.use(cors({
   origin: [
     'http://localhost:3000',
@@ -32,10 +24,19 @@ app.use(cors({
   methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true
 }));
+
 app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.text({ type: 'text/plain' }));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET_KEY, 
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
+}));
+app.use(detectLangByHeader);
 
 app.use(dbRouter);
 app.use('/api/auth', authRouter)

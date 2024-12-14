@@ -5,13 +5,17 @@
     "file_too_large": "Розмір файлу перевищує 8 Мб",
     "error_saving_file": "Помилка збереження файлу",
     "error_deleting_file": "Помилка видалення файлу",
-    "invalid_email": "Недійсна електронна адреса",
-    "invalid_password": "Недійсний пароль",
+    "invalid_email": "Недійсна електронна адреса.",
+    "invalid_password": "Недійсний пароль.",
+    "invalid_google_token": "Недійсний Google токен.",
+    "invalid_apple_token": "Недійсний Apple токен.",
     "not_found": "Даних за вашим запитом не знайдено",
     "user_not_found": "Користувача не знайдено",
-    "email_use": "Вказана електронна адреса вже використовується",
-    "email_not_verified": "Не підтверджена адреса електронної пошти. Будь ласка, підтвердьте свою електронну адресу.",
-    "email_verified": "Електронну пошту було вже верифіковано."
+    "email_use": "Вказана електронна адреса вже використовується.",
+    "email_not_verified": "Не підтверджена адреса електронної пошти. Будь ласка, підтвердіть свою електронну адресу.",
+    "email_verified": "Електронну пошту було вже верифіковано.",
+    "country_string.pattern.base": "Код країни має бути дійсним кодом ISO 3166-1 alpha-2 (наприклад, UA, US).",
+    "country_any.required": "Відсутнє обов'язкове поле 'країна'."
   },
   "en": {
     "add_info_registration": "Please provide additional information to complete registration in the app.",
@@ -21,10 +25,14 @@
     "error_deleting_file": "Error deleting file",
     "invalid_email": "Invalid email",
     "invalid_password": "Invalid password",
+    "invalid_google_token": "Invalid Google token",
+    "invalid_apple_token": "Invalid Apple token",
     "not_found": "No data found for your request.",
     "user_not_found": "Користувача не знайдено",
     "email_use": "Email already in use",
     "email_not_verified": "Email not verified. Please confirm your email.",
-    "email_verified": "Email has already been verified.."
+    "email_verified": "Email has already been verified.",
+    "country_string.pattern.base": "Country code must be a valid ISO 3166-1 alpha-2 code (e.g., UA, US).",
+    "country_any.required": "Missing required field: 'country'."
   }
 }
