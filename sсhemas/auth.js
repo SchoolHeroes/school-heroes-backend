@@ -15,6 +15,7 @@ const registerSchema = (messages) => {
     }),
     
     name: Joi.string().min(2).max(55).required().messages({
+      "string.empty": messages["name_string.empty"],
       "string.min": messages["name_string.min"],
       "string.max": messages["name_string.max"],
       "any.required": messages["name_any.required"],
@@ -26,6 +27,7 @@ const registerSchema = (messages) => {
     }),
 
     phone: Joi.string().pattern(phoneRegexp).required().messages({
+      "string.empty": messages["phone_string.empty"],
       "string.pattern.base": messages["phone_string.pattern.base"],
       "any.required": messages["phone_any.required"],
     }),
@@ -37,6 +39,7 @@ const registerSchema = (messages) => {
     }),
 
     city: Joi.string().pattern(locationRegexp).required().messages({
+      "string.empty": messages["city_string.empty"],
       "string.pattern.base": messages["city_string.pattern.base"],
       "any.required": messages["city_any.required"],
     }),
@@ -67,6 +70,7 @@ const registerSchema = (messages) => {
       then: Joi.required(),
       otherwise: Joi.forbidden(),
     }).messages({
+      "string.empty": messages["google_id_string.empty"],
       "any.required": messages["google_id_any.required"],
     }),
 
@@ -75,6 +79,7 @@ const registerSchema = (messages) => {
       then: Joi.required(),
       otherwise: Joi.forbidden(),
     }).messages({
+      "string.empty": messages["apple_id_string.empty"],
       "any.required": messages["apple_id_any.required"],
     }),
 
@@ -91,6 +96,7 @@ const registerSchema = (messages) => {
       then: Joi.required(),
       otherwise: Joi.optional(),
     }).messages({
+      "string.empty": messages["activity_string.empty"],
       "string.max": messages["activity_string.max"],
       "any.required": messages["activity_any.required"],
     }),
@@ -117,6 +123,7 @@ const emailAuthSchema = (messages) => {
 const tokenAuthSchema = (messages) => {
   return Joi.object({
     token: Joi.string().required().messages({
+      "string.empty": messages["token_string.empty"],
       "any.required": messages["token_any.required"],
     }),
     platform: Joi.string().valid("android", "ios").required().messages({

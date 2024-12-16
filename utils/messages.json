@@ -44,7 +44,14 @@
     "activity_any.required": "Відсутнє обов'язкове поле 'діяльність'",
     "token_any.required": "Відсутнє обов'язкове поле 'токен'",
     "platform_any.only": "Недійсне значення поля 'платформа'",
-    "platform_any.required": "Відсутнє обов'язкове поле 'платформа'"
+    "platform_any.required": "Відсутнє обов'язкове поле 'платформа'",
+    "name_string.empty": "Поле ім'я не може бути порожнім",
+    "phone_string.empty": "Поле телефон не може бути порожнім",
+    "city_string.empty": "Поле місто не може бути порожнім",
+    "google_id_string.empty": "Поле google_id не може бути порожнім",
+    "apple_id_string.empty": "Поле apple_id не може бути порожнім",
+    "activity_string.empty": "Поле діяльність не може бути порожнім",
+    "token_string.empty": "Поле токен не може бути порожнім"
   },
   "en": {
     "add_info_registration": "Please provide additional information to complete registration in the app.",
@@ -91,6 +98,13 @@
     "activity_any.required": "Missing required field 'activity'",
     "token_any.required": "Missing required field 'token'",
     "platform_any.only": "Invalid value for field 'platform'",
-    "platform_any.required": "Missing required field 'platform'"
+    "platform_any.required": "Missing required field 'platform'",
+    "name_string.empty": "Name field cannot be empty",
+    "phone_string.empty": "Phone field cannot be empty",
+    "city_string.empty": "City field cannot be empty",
+    "google_id_string.empty": "Google ID field cannot be empty",
+    "apple_id_string.empty": "Apple ID field cannot be empty",
+    "activity_string.empty": "Activity field cannot be empty",
+    "token_string.empty": "Token field cannot be empty"
   }
 }
