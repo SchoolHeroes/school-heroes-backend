@@ -14,15 +14,32 @@ const registerSchema = (messages) => {
       "any.required": messages["method_any.required"],
     }),
     
-    name: Joi.string().min(2).max(55).required(),
-    role: Joi.string().valid("child", "speaker").required(),
-    phone: Joi.string().pattern(phoneRegexp).required(),
+    name: Joi.string().min(2).max(55).required().messages({
+      "string.min": messages["name_string.min"],
+      "string.max": messages["name_string.max"],
+      "any.required": messages["name_any.required"],
+    }),
+
+    role: Joi.string().valid("child", "speaker").required().messages({
+      "any.only": messages["role_any.only"],
+      "any.required": messages["role_any.required"],
+    }),
+
+    phone: Joi.string().pattern(phoneRegexp).required().messages({
+      "string.pattern.base": messages["phone_string.pattern.base"],
+      "any.required": messages["phone_any.required"],
+    }),
+
     country: Joi.string().pattern(countryRegexp).required().messages({
       "string.empty": messages["country_string.empty"],
       "string.pattern.base": messages["country_string.pattern.base"],
       "any.required": messages["country_any.required"],
     }),
-    city: Joi.string().pattern(locationRegexp).required(),
+
+    city: Joi.string().pattern(locationRegexp).required().messages({
+      "string.pattern.base": messages["city_string.pattern.base"],
+      "any.required": messages["city_any.required"],
+    }),
 
     email: Joi.string().pattern(emailRegexp).when('method', {
       is: 'email',
@@ -49,12 +66,16 @@ const registerSchema = (messages) => {
       is: "google",
       then: Joi.required(),
       otherwise: Joi.forbidden(),
+    }).messages({
+      "any.required": messages["google_id_any.required"],
     }),
 
     apple_id: Joi.string().when('method', {
       is: "apple",
       then: Joi.required(),
       otherwise: Joi.forbidden(),
+    }).messages({
+      "any.required": messages["apple_id_any.required"],
     }),
 
     birthday: Joi.date().iso().when('role', {
@@ -69,6 +90,9 @@ const registerSchema = (messages) => {
       is: 'speaker',
       then: Joi.required(),
       otherwise: Joi.optional(),
+    }).messages({
+      "string.max": messages["activity_string.max"],
+      "any.required": messages["activity_any.required"],
     }),
   });
 }; 
@@ -92,8 +116,13 @@ const emailAuthSchema = (messages) => {
 
 const tokenAuthSchema = (messages) => {
   return Joi.object({
-    token: Joi.string().required(),
-    platform: Joi.string().valid("android", "ios").required(),
+    token: Joi.string().required().messages({
+      "any.required": messages["token_any.required"],
+    }),
+    platform: Joi.string().valid("android", "ios").required().messages({
+      "any.only": messages["platform_any.only"],
+      "any.required": messages["platform_any.required"],
+    }),
   });
 } 
 
