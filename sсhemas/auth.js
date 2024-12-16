@@ -9,12 +9,16 @@ const {
 
 const registerSchema = (messages) => {
   return Joi.object({
-    method: Joi.string().valid("email", "google", "apple").required(),
+    method: Joi.string().valid("email", "google", "apple").required().messages({
+      "any.only": messages["method_any.only"],
+      "any.required": messages["method_any.required"],
+    }),
     
     name: Joi.string().min(2).max(55).required(),
     role: Joi.string().valid("child", "speaker").required(),
     phone: Joi.string().pattern(phoneRegexp).required(),
     country: Joi.string().pattern(countryRegexp).required().messages({
+      "string.empty": messages["country_string.empty"],
       "string.pattern.base": messages["country_string.pattern.base"],
       "any.required": messages["country_any.required"],
     }),
@@ -24,11 +28,21 @@ const registerSchema = (messages) => {
       is: 'email',
       then: Joi.required(),
       otherwise: Joi.optional(),
+    }).messages({
+      "string.empty": messages["email_string.empty"],
+      "string.pattern.base": messages["email_string.pattern.base"],
+      "any.required": messages["email_any.required"],
     }),
     password: Joi.string().min(8).max(24).pattern(passwordRegex).when('method', {
       is: 'email',
       then: Joi.required(),
       otherwise: Joi.forbidden(),
+    }).messages({
+      "string.min": messages["password_string.min"],
+      "string.max": messages["password_string.max"],
+      "string.empty": messages["password_string.empty"],
+      "string.pattern.base": messages["password_string.pattern.base"],
+      "any.required": messages["password_any.required"],
     }),
 
     google_id: Joi.string().when('method', {
@@ -47,6 +61,9 @@ const registerSchema = (messages) => {
       is: 'child',
       then: Joi.required(),
       otherwise: Joi.optional(),
+    }).messages({
+      "date.format": messages["birthday_date.format"],
+      "any.required": messages["birthday_any.required"],
     }),
     activity: Joi.string().max(55).when('role', {
       is: 'speaker',
@@ -56,19 +73,39 @@ const registerSchema = (messages) => {
   });
 }; 
 
-const emailAuthSchema = Joi.object({
-  password: Joi.string().min(8).max(24).required(),
-  email: Joi.string().pattern(emailRegexp).required(),
-});
+const emailAuthSchema = (messages) => {
+  return Joi.object({
+    email: Joi.string().pattern(emailRegexp).required().messages({
+      "string.empty": messages["email_string.empty"],
+      "string.pattern.base": messages["email_string.pattern.base"],
+      "any.required": messages["email_any.required"],
+    }),
+    password: Joi.string().min(8).max(24).pattern(passwordRegex).required().messages({
+      "string.min": messages["password_string.min"],
+      "string.max": messages["password_string.max"],
+      "string.empty": messages["password_string.empty"],
+      "string.pattern.base": messages["password_string.pattern.base"],
+      "any.required": messages["password_any.required"],
+    }),
+  }); 
+};
 
-const tokenAuthSchema = Joi.object({
-  token: Joi.string().required(),
-  platform: Joi.string().valid("android", "ios").required(),
-});
+const tokenAuthSchema = (messages) => {
+  return Joi.object({
+    token: Joi.string().required(),
+    platform: Joi.string().valid("android", "ios").required(),
+  });
+} 
 
-const emailSchema = Joi.object({
-  email: Joi.string().pattern(emailRegexp).required(),
-});
+const emailSchema = (messages) => {
+  return Joi.object({
+    email: Joi.string().pattern(emailRegexp).required().messages({
+      "string.empty": messages["email_string.empty"],
+      "string.pattern.base": messages["email_string.pattern.base"],
+      "any.required": messages["email_any.required"],
+    }),
+  });
+} 
 
 // const updateUserSchema = Joi.object({
 //   passions: Joi.string().default(''),
