@@ -1,10 +1,11 @@
 const Joi = require('joi');
 const {
-    emailRegexp,
-    phoneRegexp,
-    passwordRegex,
-    countryRegexp,
-    locationRegexp,
+  emailRegexp,
+  phoneRegexp,
+  passwordRegex,
+  countryRegexp,
+  locationRegexp,
+  dateTimeRegexp,
 } = require("../utils/regexp");
 
 const registerSchema = (messages) => {
@@ -83,12 +84,12 @@ const registerSchema = (messages) => {
       "any.required": messages["apple_id_any.required"],
     }),
 
-    birthday: Joi.date().iso().when('role', {
+    birthday: Joi.string().pattern(dateTimeRegexp).when('role', {
       is: 'child',
       then: Joi.required(),
       otherwise: Joi.optional(),
     }).messages({
-      "date.format": messages["birthday_date.format"],
+      "string.pattern.base": messages["birthday_string.pattern.base"],
       "any.required": messages["birthday_any.required"],
     }),
     activity: Joi.string().max(55).when('role', {
