@@ -270,6 +270,102 @@
           }
         }
       }
+    },
+    "/auth/verify": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Resend verify email",
+        "requestBody": {
+          "description": "User's email object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendVerifyEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendVerifyEmailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Помилка формату електронної адреси."
+                } 
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Користувача не знайдено."
+                } 
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict (email verified)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Електронну пошту було вже верифіковано."
+                } 
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify/{verificationToken}": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Verify email",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verificationToken",
+            "required": true,
+            "type": "string",
+            "description": "Verification token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyEmailResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Користувача не знайдено."
+                } 
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -794,7 +890,7 @@
               "email": {
                 "type": "string",
                 "description": "User email",
-                "example": "tarasdibrova@gmail.com"
+                "example": "user@example.com"
               },
               "role": {
                 "type": "string",
@@ -839,7 +935,7 @@
           "user": {
             "_id": "7543",
             "method": "email",
-            "email": "tarasdibrova@gmail.com",
+            "email": "user@example.com",
             "role": "speaker",
             "name": "Тарас Діброва",
             "phone": "+380123456789",
@@ -1102,6 +1198,43 @@
             "apple_id": "001345.abcde12345.fghijkl67890mnopq",
             "email": "tarasdibrova@gmail.com"
           } 
+        }
+      },
+      "ResendVerifyEmailRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          }
+        }
+      },
+      "ResendVerifyEmailResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message of successful sending of email for verification",
+            "example": "Ми надіслали вам електронний лист для підтвердження. Будь ласка, підтвердьте свою електронну адресу."
+          }
+        },
+        "example": {
+          "message": "Ми надіслали вам електронний лист для підтвердження. Будь ласка, підтвердьте свою електронну адресу." 
+        }
+      },
+      "VerifyEmailResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Email confirmation successful notification",
+            "example": "Успішне підтвердження електронної пошти."
+          }
+        },
+        "example": {
+          "message": "Успішне підтвердження електронної пошти." 
         }
       }
     },
