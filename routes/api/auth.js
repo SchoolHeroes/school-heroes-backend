@@ -21,6 +21,8 @@ router.post("/apple", validateBody(tokenAuthSchema), ctrl.appleAuth);
 
 router.post("/verify", verifyEmailLimiter, validateBody(emailSchema), ctrl.resendVerifyEmail);
 
+router.patch("/verify/:verificationToken", ctrl.verifyEmail);
+
 router.get("/interval", (req, res) => { 
     res.json({message: "Server online"});
 });

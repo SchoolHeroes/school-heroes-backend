@@ -304,10 +304,34 @@ const resendVerifyEmail = async (req, res) => {
   });
 };
 
+const verifyEmail = async (req, res) => {
+  const langMessages = messages[req.language];
+  const {verificationToken} = req.params;
+    
+  const user = await prisma.user.findUnique({
+    where: { verification_token: verificationToken },
+  });
+
+  if (!user) {
+    const errorMessage = langMessages.user_not_found;
+    throw httpError(404, errorMessage);
+  }
+  
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { verify_email: true, verification_token: null },
+  });
+  
+  res.status(200).json({
+    message: langMessages.email_verified_success,
+  })
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   emailAuth: ctrlWrapper(emailAuth),
   googleAuth: ctrlWrapper(googleAuth),
   appleAuth: ctrlWrapper(appleAuth),
   resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
+  verifyEmail: ctrlWrapper(verifyEmail),
 }

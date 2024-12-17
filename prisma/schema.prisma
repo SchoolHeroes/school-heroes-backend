@@ -52,7 +52,7 @@ model User {
   passions  String?
   points    Int?
   verify_email  Boolean @default(false)
-  verification_token String?
+  verification_token String? @unique
   createdAt DateTime @default(now()) 
   updatedAt DateTime   @updatedAt             
 }
