@@ -730,7 +730,7 @@
               "avatar": {
                 "type": "string",
                 "description": "User's avatar url",
-                "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
+                "example": "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"
               }
             }
           }
@@ -747,7 +747,7 @@
             "country": "UA",
             "city": "Київ",
             "activity": "Фермер",
-            "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+            "avatar":  "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"             
           }
         }
       },
@@ -829,7 +829,7 @@
               "avatar": {
                 "type": "string",
                 "description": "User's avatar url",
-                "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
+                "example": "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"
               }
             }
           }
@@ -846,7 +846,7 @@
             "country": "UA",
             "city": "Київ",
             "activity": "Фермер",
-            "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+            "avatar":  "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"             
           }
         }
       },
@@ -924,7 +924,7 @@
               "avatar": {
                 "type": "string",
                 "description": "User's avatar url",
-                "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
+                "example": "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"
               }
             }
           }
@@ -941,7 +941,7 @@
             "country": "UA",
             "city": "Київ",
             "activity": "Фермер",
-            "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+            "avatar":  "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"             
           }
         }
       },
@@ -1051,7 +1051,7 @@
               "avatar": {
                 "type": "string",
                 "description": "User's avatar url",
-                "example": "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"
+                "example": "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"
               }
             }
           }
@@ -1068,7 +1068,7 @@
             "country": "UA",
             "city": "Київ",
             "activity": "Фермер",
-            "avatar":  "http://res.cloudinary.com/qwsdftyuio/image/upload/qwsdfghjk/qwsdfghj.jpg"             
+            "avatar":  "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"             
           }
         }
       },
