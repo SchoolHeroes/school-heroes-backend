@@ -276,7 +276,7 @@
         "tags": ["Auth"],
         "summary": "Resend verify email",
         "requestBody": {
-          "description": "User's email object",
+          "description": "Email verification object",
           "required": true,
           "content": {
             "application/json": {
@@ -288,7 +288,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Successful operation (email sent to verify email address)",
             "content": {
               "application/json": {
                 "schema": {
@@ -351,6 +351,104 @@
                 "schema": {
                   "$ref": "#/components/schemas/VerifyEmailResponse"
                 }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Користувача не знайдено."
+                } 
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Send password reset link to email",
+        "requestBody": {
+          "description": "Password reset object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation (password reset link '${BASE_CLIENT_URL}/reset-password?token=${token}' sent to user email)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetPasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Помилка формату електронної адреси."
+                } 
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Користувача не знайдено."
+                } 
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/confirm-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Password change confirmation and user login",
+        "requestBody": {
+          "description": "Password confirm object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Токен недійсний або закінчився час. Будь ласка, повторіть спробу."
+                } 
               }
             }
           },
@@ -1235,6 +1333,129 @@
         },
         "example": {
           "message": "Успішне підтвердження електронної пошти." 
+        }
+      },
+      "ResetPasswordRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          }
+        }
+      },
+      "ResetPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message of successful sending of email for reset password",
+            "example": "Ми надіслали вам листа з інструкціями для відновлення паролю. Будь ласка, перевірте свою електронну скриньку."
+          }
+        },
+        "example": {
+          "message": "Ми надіслали вам листа з інструкціями для відновлення паролю. Будь ласка, перевірте свою електронну скриньку." 
+        }
+      },
+       "ConfirmPasswordRequest": {
+        "type": "object",
+        "required": ["token", "password"],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Password reset token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "minLength": 8,
+            "maxLength": 24,
+            "pattern": "^[a-zA-Z0-9]{8,24}$",
+            "example": "Qw52eRty37"
+          }
+        }
+      },
+      "ConfirmPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "User's access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "User's id",
+                "example": "7543"
+              },
+              "method": {
+                "type": "string",
+                "description": "Registration method",
+                "example": "email"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
+                "example": "user@example.com"
+              },
+              "role": {
+                "type": "string",
+                "description": "User role",
+                "example": "speaker"
+              },
+              "name": {
+                "type": "string",
+                "description": "User name",
+                "example": "Тарас Діброва"
+              },
+              "phone": {
+                "type": "string",
+                "description": "User's phone",
+                "example": "+380123456789"
+              },
+              "country": {
+                "type": "string",
+                "description": "User's country code",
+                "example": "UA"
+              },
+              "city": {
+                "type": "string",
+                "description": "User's city",
+                "example": "Київ"
+              },
+              "activity": {
+                "type": "string",
+                "description": "User activity",
+                "example": "Фермер"
+              },
+              "avatar": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"
+              }
+            }
+          }
+        },
+        "example": {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
+          "user": {
+            "_id": "7543",
+            "method": "email",
+            "email": "user@example.com",
+            "role": "speaker",
+            "name": "Тарас Діброва",
+            "phone": "+380123456789",
+            "country": "UA",
+            "city": "Київ",
+            "activity": "Фермер",
+            "avatar":  "https://res.cloudinary.com/dwytvvuru/image/upload/v1734437274/jzvo9yxcazykd4zp8xfy.jpg"             
+          }
         }
       }
     },

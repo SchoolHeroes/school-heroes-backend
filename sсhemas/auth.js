@@ -132,7 +132,7 @@ const tokenAuthSchema = (messages) => {
       "any.required": messages["platform_any.required"],
     }),
   });
-} 
+}; 
 
 const emailSchema = (messages) => {
   return Joi.object({
@@ -142,7 +142,23 @@ const emailSchema = (messages) => {
       "any.required": messages["email_any.required"],
     }),
   });
-} 
+};
+
+const confirmPasswordSchema = (messages) => {
+  return Joi.object({
+    token: Joi.string().required().messages({
+      "string.empty": messages["token_string.empty"],
+      "any.required": messages["token_any.required"],
+    }),
+    password: Joi.string().min(8).max(24).pattern(passwordRegex).required().messages({
+      "string.min": messages["password_string.min"],
+      "string.max": messages["password_string.max"],
+      "string.empty": messages["password_string.empty"],
+      "string.pattern.base": messages["password_string.pattern.base"],
+      "any.required": messages["password_any.required"],
+    }),
+  });
+};
 
 // const updateUserSchema = Joi.object({
 //   passions: Joi.string().default(''),
@@ -154,4 +170,5 @@ module.exports = {
   emailAuthSchema,
   tokenAuthSchema,
   emailSchema,
+  confirmPasswordSchema,
 };
