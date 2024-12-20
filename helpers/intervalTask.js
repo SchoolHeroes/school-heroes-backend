@@ -8,7 +8,7 @@ const intervalTask = () => {
     } catch (error) {
       console.error('Error sending request:', error.message);
     }
-  }, 15 * 60 * 1000); 
+  }, 10 * 60 * 1000); 
 }
 
 module.exports = intervalTask;
