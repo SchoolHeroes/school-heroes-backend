@@ -18,6 +18,10 @@
       "description": "Authorization endpoints"
     },
     {
+      "name": "Users",
+      "description": "Users endpoints"
+    },
+    {
       "name": "Events",
       "description": "Events endpoints"
     },
