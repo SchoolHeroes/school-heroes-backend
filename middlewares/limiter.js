@@ -26,7 +26,7 @@ const verifyEmailLimiter = rateLimit({
     message: 'Ви перевищили ліміт спроб підтвердження адреси електронної пошти. Спробуйте через 15 хвилин.',
 });
 
-const recoveryPasswordLimiter = rateLimit({
+const resetPasswordLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, 
     max: 10, 
     message: 'Ви перевищили ліміт спроб відновлення паролю. Спробуйте через 15 хвилин.',
@@ -37,5 +37,5 @@ module.exports = {
     registrationLimiter,
     loginLimiter,
     verifyEmailLimiter,
-    recoveryPasswordLimiter,
+    resetPasswordLimiter,
 }

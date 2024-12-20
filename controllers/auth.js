@@ -9,7 +9,7 @@ const { uploadFileToCloudinary, deleteFileFromCloudinary } = require("../helpers
 const messages = require('../utils/messages.json');
 require('dotenv').config();
 
-const { JWT_SECRET_KEY, BASE_SERVER_URL } = process.env;
+const { JWT_SECRET_KEY, BASE_SERVER_URL, BASE_CLIENT_URL } = process.env;
 
 const prisma = new PrismaClient();
 
@@ -55,11 +55,11 @@ const register = async (req, res) => {
     }
 
     const verifyEmail = {
-        to: [{email}],
-        subject: "Підтвердження адреси електронної пошти у додатку «Школа Героїв»",
-        html: `
+      to: [{ email }],
+      subject: "Підтвердження адреси електронної пошти у додатку «Школа Героїв»",
+      html: `
             <p>
-                <a target="_blank" href="${BASE_SERVER_URL}/api/auth/verify/${verificationToken}">Натисніть тут</a> для підтвердження адреси вашої електронної пошти
+              <a target="_blank" href="${BASE_SERVER_URL}/api/auth/verify/${verificationToken}">Натисніть тут</a> для підтвердження адреси вашої електронної пошти
             </p>
             `
     };
@@ -288,13 +288,13 @@ const resendVerifyEmail = async (req, res) => {
   }
 
   const verifyEmail = {
-    to: [{email}],
+    to: [{ email }],
     subject: "Підтвердження адреси електронної пошти у додатку «Школа Героїв»",
     html: `
-      <p>
+        <p>
           <a target="_blank" href="${BASE_SERVER_URL}/api/auth/verify/${user.verification_token}">Натисніть тут</a> для підтвердження адреси вашої електронної пошти
-      </p>
-      `
+        </p>
+        `
   };
   
   await sendEmail(verifyEmail);
@@ -327,6 +327,91 @@ const verifyEmail = async (req, res) => {
   })
 };
 
+const resetPassword = async (req, res) => {
+  const langMessages = messages[req.language];
+  const {email} = req.body;
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    const errorMessage = langMessages.user_not_found;
+    throw httpError(404, errorMessage);
+  }
+
+  const token = jwt.sign({userId: user.id}, JWT_SECRET_KEY, {expiresIn: '1h'});
+
+  const resetPasswordEmail = {
+    to: [{ email }],
+    subject: "Відновлення паролю у додатку «Школа Героїв»",
+    html: `
+          <p>
+              <a target="_blank" href="${BASE_CLIENT_URL}/reset-password?token=${token}">Натисніть тут</a> для відновлення паролю
+          </p>
+          `
+  };
+
+  await sendEmail(resetPasswordEmail);
+
+  res.status(200).json({
+    message: langMessages.sent_reset_password_email
+  });
+};
+
+const confirmPassword = async (req, res) => {
+  const langMessages = messages[req.language];
+  const { token, password } = req.body;
+  
+  let userId;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET_KEY);
+    userId = decoded.userId;
+  } catch (error) {
+    const errorMessage = langMessages.invalid_jwt_token;
+    throw httpError(400, errorMessage);
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    const errorMessage = langMessages.user_not_found;
+    throw httpError(404, errorMessage);
+  }
+
+  const hasPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { password: hasPassword },
+  });
+
+  const jwtToken = generateToken(user.id);
+
+  const authUserInfo =
+  {
+          "_id": user.id,
+          "method": user.method,
+          "email": user.email,
+          "role": user.role,
+          "name": user.name,
+          "phone": user.phone,
+          "country": user.country,
+          "city": user.city,
+          "avatar": user.avatar
+  }
+
+  if(user.role === "speaker"){
+    authUserInfo.activity = user.activity
+  } else if(user.role === "child"){
+    authUserInfo.birthday = user.birthday
+  }
+
+  res.status(200).json({ token: jwtToken, user: authUserInfo });
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   emailAuth: ctrlWrapper(emailAuth),
@@ -334,4 +419,6 @@ module.exports = {
   appleAuth: ctrlWrapper(appleAuth),
   resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
   verifyEmail: ctrlWrapper(verifyEmail),
+  resetPassword: ctrlWrapper(resetPassword),
+  confirmPassword: ctrlWrapper(confirmPassword),
 }
