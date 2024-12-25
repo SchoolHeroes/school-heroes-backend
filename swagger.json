@@ -881,9 +881,9 @@
             "type": "object",
             "properties": {
               "_id": {
-                "type": "string",
+                "type": "integer",
                 "description": "User's id",
-                "example": "7543"
+                "example": 12
               },
               "method": {
                 "type": "string",
@@ -936,7 +936,7 @@
         "example": {
           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
           "user": {
-            "_id": "7543",
+            "_id": 12,
             "method": "google",
             "email": "tarasdibrova@gmail.com",
             "role": "speaker",
@@ -980,9 +980,9 @@
             "type": "object",
             "properties": {
               "_id": {
-                "type": "string",
+                "type": "integer",
                 "description": "User's id",
-                "example": "7543"
+                "example": 12
               },
               "method": {
                 "type": "string",
@@ -1035,7 +1035,7 @@
         "example": {
           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
           "user": {
-            "_id": "7543",
+            "_id": 12,
             "method": "email",
             "email": "user@example.com",
             "role": "speaker",
@@ -1075,9 +1075,9 @@
             "type": "object",
             "properties": {
               "_id": {
-                "type": "string",
+                "type": "integer",
                 "description": "User's id",
-                "example": "7543"
+                "example": 12
               },
               "method": {
                 "type": "string",
@@ -1130,7 +1130,7 @@
         "example": {
           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
           "user": {
-            "_id": "7543",
+            "_id": 12,
             "method": "google",
             "email": "tarasdibrova@gmail.com",
             "role": "speaker",
@@ -1202,9 +1202,9 @@
             "type": "object",
             "properties": {
               "_id": {
-                "type": "string",
+                "type": "integer",
                 "description": "User's id",
-                "example": "7543"
+                "example": 12
               },
               "method": {
                 "type": "string",
@@ -1257,7 +1257,7 @@
         "example": {
           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
           "user": {
-            "_id": "7543",
+            "_id": 12,
             "method": "apple",
             "email": "tarasdibrova@gmail.com",
             "role": "speaker",
@@ -1394,9 +1394,9 @@
             "type": "object",
             "properties": {
               "_id": {
-                "type": "string",
+                "type": "integer",
                 "description": "User's id",
-                "example": "7543"
+                "example": 12
               },
               "method": {
                 "type": "string",
@@ -1449,7 +1449,7 @@
         "example": {
           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTUwMGYwOWNmNDE5ZDJiMjY4MjBiOSIsImlhdCI6MTY5MjczNTM3NiwiZXhwIjoxNjkzMzQwMTc2fQ.zy8aG3QMFs-ARrn2ji0vWJ2Rtcr65NBnz5sBT7Z8fO8",
           "user": {
-            "_id": "7543",
+            "_id": 12,
             "method": "email",
             "email": "user@example.com",
             "role": "speaker",
