@@ -1,10 +1,8 @@
 const { OAuth2Client } = require("google-auth-library");
 const { httpError } = require('./httpError');
+const { GOOGLE_ANDROID_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } = process.env;
 
 const getGoogleId = async ({token, platform}) => {
-    const googleClient = new OAuth2Client();
-    const { GOOGLE_ANDROID_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } = process.env;
-
     let clientId;
 
     if (platform === 'android') {
@@ -12,6 +10,8 @@ const getGoogleId = async ({token, platform}) => {
     } else if (platform === 'ios') {
         clientId = GOOGLE_IOS_CLIENT_ID;
     }
+
+    const googleClient = new OAuth2Client();
 
     const ticket = await googleClient.verifyIdToken({
         idToken: token,
