@@ -157,7 +157,7 @@ const googleAuth = async (req, res) => {
   const langMessages = messages[req.language];
   const { token, platform } = req.body;
 
-  const data = getGoogleId({token, platform});
+  const data = await getGoogleId({token, platform});
   const { google_id, email } = data;
 
   const user = await prisma.user.findFirst({
