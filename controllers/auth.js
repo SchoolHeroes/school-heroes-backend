@@ -215,7 +215,7 @@ const appleAuth = async (req, res) => {
   const langMessages = messages[req.language];
   const { token } = req.body;
 
-  const data = getAppleId(token);
+  const data = await getAppleId(token);
   const { apple_id, email } = data;
 
   const user = await prisma.user.findFirst({
