@@ -1,5 +1,5 @@
 const { OAuth2Client } = require("google-auth-library");
-const { httpError } = require('./httpError');
+const httpError = require('./httpError');
 const { GOOGLE_ANDROID_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } = process.env;
 
 const getGoogleId = async ({token, platform}) => {
