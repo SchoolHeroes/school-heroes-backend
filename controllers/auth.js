@@ -13,8 +13,10 @@ const { JWT_SECRET_KEY, BASE_SERVER_URL, BASE_CLIENT_URL } = process.env;
 
 const prisma = new PrismaClient();
 
-const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, JWT_SECRET_KEY, { expiresIn: "24h" });
+const generateJwtToken = (userId) => {
+  const jwtToken = jwt.sign({ id: userId }, JWT_SECRET_KEY, { expiresIn: "24h" });
+  const expiresAt = new Date(Date.now() + 3600 * 24000); 
+  return { jwtToken, expiresAt };
 };
 
 const register = async (req, res) => {
@@ -73,26 +75,33 @@ const register = async (req, res) => {
   
   const newUser = await prisma.user.create({data});
 
-  const jwtToken = generateToken(newUser.id);
+  const { jwtToken, expiresAt } = generateJwtToken(newUser.id);
+  
+  await prisma.active_token.create({
+      data: {
+        user_id: newUser.id, 
+        token: jwtToken, 
+        expires_at: expiresAt,
+      },
+    });
 
-  const authUserInfo =
-  {
-          "_id": newUser.id,
-          "method": newUser.method,
-          "email": newUser.email,
-          "role": newUser.role,
-          "name": newUser.name,
-          "phone": newUser.phone,
-          "country": newUser.country,
-          "city": newUser.city,
-          "avatar": newUser.avatar
-  }
+  const authUserInfo = {
+    "_id": newUser.id,
+    "method": newUser.method,
+    "email": newUser.email,
+    "role": newUser.role,
+    "name": newUser.name,
+    "phone": newUser.phone,
+    "country": newUser.country,
+    "city": newUser.city,
+    "avatar": newUser.avatar
+  };
 
-  if(newUser.role === "speaker"){
+  if (newUser.role === "speaker"){
     authUserInfo.activity = newUser.activity
-  } else if(newUser.role === "child"){
+  } else if (newUser.role === "child"){
     authUserInfo.birthday = newUser.birthday
-  }
+  };
 
   res.status(201).json({ token: jwtToken, user: authUserInfo });
 };
@@ -129,26 +138,33 @@ const emailAuth = async (req, res) => {
       });
     }
 
-  const jwtToken = generateToken(user.id);
+  const { jwtToken, expiresAt } = generateJwtToken(user.id);
+  
+  await prisma.activeToken.create({
+    data: {
+      user_id: user.id, 
+      token: jwtToken, 
+      expires_at: expiresAt,
+    }
+  });
 
-  const authUserInfo =
-  {
-          "_id": user.id,
-          "method": user.method,
-          "email": user.email,
-          "role": user.role,
-          "name": user.name,
-          "phone": user.phone,
-          "country": user.country,
-          "city": user.city,
-          "avatar": user.avatar
-  }
+  const authUserInfo = {
+    "_id": user.id,
+    "method": user.method,
+    "email": user.email,
+    "role": user.role,
+    "name": user.name,
+    "phone": user.phone,
+    "country": user.country,
+    "city": user.city,
+    "avatar": user.avatar
+  };
 
-  if(user.role === "speaker"){
+  if (user.role === "speaker"){
     authUserInfo.activity = user.activity
-  } else if(user.role === "child"){
+  } else if (user.role === "child"){
     authUserInfo.birthday = user.birthday
-  }
+  };
 
   res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
@@ -187,26 +203,33 @@ const googleAuth = async (req, res) => {
       });
     } 
   
-  const jwtToken = generateToken(updatedUser.id);
+  const { jwtToken, expiresAt } = generateJwtToken(user.id);
+  
+  await prisma.active_token.create({
+    data: {
+      user_id: user.id, 
+      token: jwtToken, 
+      expires_at: expiresAt,
+    },
+  });
 
-  const authUserInfo =
-  {
-          "_id": updatedUser.id,
-          "method": updatedUser.method,
-          "email": updatedUser.email,
-          "role": updatedUser.role,
-          "name": updatedUser.name,
-          "phone": updatedUser.phone,
-          "country": updatedUser.country,
-          "city": updatedUser.city,
-          "avatar": updatedUser.avatar
-  }
+  const authUserInfo = {
+    "_id": updatedUser.id,
+    "method": updatedUser.method,
+    "email": updatedUser.email,
+    "role": updatedUser.role,
+    "name": updatedUser.name,
+    "phone": updatedUser.phone,
+    "country": updatedUser.country,
+    "city": updatedUser.city,
+    "avatar": updatedUser.avatar
+  };
 
-  if(updatedUser.role === "speaker"){
+  if (updatedUser.role === "speaker"){
     authUserInfo.activity = updatedUser.activity
-  } else if(updatedUser.role === "child"){
+  } else if (updatedUser.role === "child"){
     authUserInfo.birthday = updatedUser.birthday
-  }
+  };
 
   res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
@@ -245,26 +268,33 @@ const appleAuth = async (req, res) => {
       });
     } 
   
-  const jwtToken = generateToken(updatedUser.id);
+  const { jwtToken, expiresAt } = generateJwtToken(user.id);
+  
+  await prisma.active_token.create({
+    data: {
+      user_id: user.id, 
+      token: jwtToken, 
+      expires_at: expiresAt,
+    },
+  });
 
-  const authUserInfo =
-  {
-          "_id": updatedUser.id,
-          "method": updatedUser.method,
-          "email": updatedUser.email,
-          "role": updatedUser.role,
-          "name": updatedUser.name,
-          "phone": updatedUser.phone,
-          "country": updatedUser.country,
-          "city": updatedUser.city,
-          "avatar": updatedUser.avatar
-  }
+  const authUserInfo = {
+    "_id": updatedUser.id,
+    "method": updatedUser.method,
+    "email": updatedUser.email,
+    "role": updatedUser.role,
+    "name": updatedUser.name,
+    "phone": updatedUser.phone,
+    "country": updatedUser.country,
+    "city": updatedUser.city,
+    "avatar": updatedUser.avatar
+  };
 
-  if(updatedUser.role === "speaker"){
+  if (updatedUser.role === "speaker"){
     authUserInfo.activity = updatedUser.activity
-  } else if(updatedUser.role === "child"){
+  } else if (updatedUser.role === "child"){
     authUserInfo.birthday = updatedUser.birthday
-  }
+  };
 
   res.status(200).json({ token: jwtToken, user: authUserInfo });
 };
@@ -388,26 +418,33 @@ const confirmPassword = async (req, res) => {
     data: { password: hasPassword },
   });
 
-  const jwtToken = generateToken(user.id);
+  const { jwtToken, expiresAt } = generateJwtToken(user.id);
+  
+  await prisma.active_token.create({
+    data: {
+      user_id: user.id, 
+      token: jwtToken, 
+      expires_at: expiresAt,
+    },
+  });
 
-  const authUserInfo =
-  {
-          "_id": user.id,
-          "method": user.method,
-          "email": user.email,
-          "role": user.role,
-          "name": user.name,
-          "phone": user.phone,
-          "country": user.country,
-          "city": user.city,
-          "avatar": user.avatar
-  }
+  const authUserInfo = {
+    "_id": user.id,
+    "method": user.method,
+    "email": user.email,
+    "role": user.role,
+    "name": user.name,
+    "phone": user.phone,
+    "country": user.country,
+    "city": user.city,
+    "avatar": user.avatar
+  };
 
-  if(user.role === "speaker"){
+  if (user.role === "speaker"){
     authUserInfo.activity = user.activity
-  } else if(user.role === "child"){
+  } else if (user.role === "child"){
     authUserInfo.birthday = user.birthday
-  }
+  };
 
   res.status(200).json({ token: jwtToken, user: authUserInfo });
 };

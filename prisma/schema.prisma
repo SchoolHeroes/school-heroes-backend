@@ -30,10 +30,10 @@ enum UserRole {
 model User {
   id        Int      @id @default(autoincrement()) 
   method    AuthMethod
-  email     String?   @unique
-  password  String?
   google_id String?   @unique
-  apple_id  String?   @unique 
+  apple_id  String?   @unique
+  email     String?   @unique
+  password  String? 
   role      UserRole                     
   name      String
   phone     String
@@ -53,6 +53,28 @@ model User {
   points    Int?
   verify_email  Boolean @default(false)
   verification_token String? @unique
-  createdAt DateTime @default(now()) 
-  updatedAt DateTime   @updatedAt             
+  created_at DateTime @default(now()) 
+  updated_at DateTime  @updatedAt   
+
+  active_tokens    ActiveToken[]  
+
+  @@map("user")
+
+  @@index([google_id])
+  @@index([apple_id])
+  @@index([email])         
+}
+
+model ActiveToken {
+  id           Int        @id @default(autoincrement())
+  user_id      Int
+  token        String     @unique
+  changed_at   DateTime   @default(now())
+  expires_at   DateTime
+
+  user         User       @relation(fields: [user_id], references: [id])
+
+  @@map("active_token")
+
+  @@index([user_id])
 }
