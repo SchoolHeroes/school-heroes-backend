@@ -4,7 +4,7 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-// npx prisma migrate dev --name add-verify_email
+// npx prisma migrate dev --name add-User_ActiveToken
 // npx prisma generate
 
 generator client {
@@ -58,8 +58,6 @@ model User {
 
   active_tokens    ActiveToken[]  
 
-  @@map("user")
-
   @@index([google_id])
   @@index([apple_id])
   @@index([email])         
@@ -69,12 +67,8 @@ model ActiveToken {
   id           Int        @id @default(autoincrement())
   user_id      Int
   token        String     @unique
-  changed_at   DateTime   @default(now())
+  created_at   DateTime   @default(now())
   expires_at   DateTime
 
   user         User       @relation(fields: [user_id], references: [id])
-
-  @@map("active_token")
-
-  @@index([user_id])
 }
