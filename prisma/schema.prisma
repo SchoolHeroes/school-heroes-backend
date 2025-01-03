@@ -56,14 +56,14 @@ model User {
   createdAt DateTime @default(now()) 
   updatedAt DateTime  @updatedAt   
 
-  active_tokens    ActiveToken[]  
+  active_tokens    activeToken[]  
 
   @@index([google_id])
   @@index([apple_id])
   @@index([email])         
 }
 
-model ActiveToken {
+model activeToken {
   id           Int        @id @default(autoincrement())
   user_id      Int
   token        String     @unique
