@@ -77,7 +77,7 @@ const register = async (req, res) => {
 
   const { jwtToken, expiresAt } = generateJwtToken(newUser.id);
   
-  await prisma.active_token.create({
+  await prisma.activeToken.create({
       data: {
         user_id: newUser.id, 
         token: jwtToken, 
@@ -205,7 +205,7 @@ const googleAuth = async (req, res) => {
   
   const { jwtToken, expiresAt } = generateJwtToken(user.id);
   
-  await prisma.active_token.create({
+  await prisma.activeToken.create({
     data: {
       user_id: user.id, 
       token: jwtToken, 
@@ -270,7 +270,7 @@ const appleAuth = async (req, res) => {
   
   const { jwtToken, expiresAt } = generateJwtToken(user.id);
   
-  await prisma.active_token.create({
+  await prisma.activeToken.create({
     data: {
       user_id: user.id, 
       token: jwtToken, 
@@ -420,7 +420,7 @@ const confirmPassword = async (req, res) => {
 
   const { jwtToken, expiresAt } = generateJwtToken(user.id);
   
-  await prisma.active_token.create({
+  await prisma.activeToken.create({
     data: {
       user_id: user.id, 
       token: jwtToken, 

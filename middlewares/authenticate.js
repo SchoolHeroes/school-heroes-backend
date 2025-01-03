@@ -19,7 +19,7 @@ const authenticate = async (req, res, next) => {
 
         const [user, activeToken] = await Promise.all([
             prisma.user.findUnique({ where: { id } }),
-            prisma.active_token.findUnique({ where: { token } }),
+            prisma.activeToken.findUnique({ where: { token } }),
         ]);
 
         if (!user || !activeToken) {
