@@ -14,6 +14,7 @@ const authRouter = require('./routes/api/auth')
 
 const app = express()
 
+app.set('trust proxy', true);
 app.use(apiLimiter);
 app.use(cors({
   origin: [
