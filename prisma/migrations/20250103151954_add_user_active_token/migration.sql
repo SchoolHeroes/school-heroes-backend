@@ -31,8 +31,8 @@ CREATE TABLE "User" (
     "points" INTEGER,
     "verify_email" BOOLEAN NOT NULL DEFAULT false,
     "verification_token" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -42,8 +42,8 @@ CREATE TABLE "ActiveToken" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
     "token" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expires_at" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ActiveToken_pkey" PRIMARY KEY ("id")
 );
