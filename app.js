@@ -20,6 +20,7 @@ app.use(cors({
     'http://localhost:3000',
     'http://localhost:3001',
     'https://www.liqpay.ua',
+    'https://school-heroes-backend.onrender.com',
   ],
   methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true
